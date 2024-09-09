@@ -6,7 +6,8 @@ source("paths-mac.R")
 
 # Read datasets ----- 
 ### IR vars created datasets -----
-df_IR_full <- read_fst(here(path_project, "processed-data", "1.1-dhs-IR-vars-created-full.fst"), as.data.table = TRUE)
+df_IR_full_6mo <- read_fst(here(path_project, "processed-data", "1.1-dhs-IR-vars-created-6mo.fst"), as.data.table = TRUE)
+df_IR_full_7mo <- read_fst(here(path_project, "processed-data", "1.1-dhs-IR-vars-created-7mo.fst"), as.data.table = TRUE)
 
 ## Climate zones of India with districts ----
 df_zones <- read_fst(here(path_project, "processed-data", "1.3-india-dist-climate-zones.fst"), as.data.table = TRUE)
@@ -29,15 +30,23 @@ df_zones <- df_zones |>
     TRUE ~ dist_name))
 
 ## Merge df_zones with df_IR_full -----
-df_IR_full_w_zones <- merge(df_IR_full, df_zones, 
+### For 6mo dataset
+df_IR_full_w_zones_6mo <- merge(df_IR_full_6mo, df_zones, 
                     by.x = c("meta_state_name", "meta_dist_name"), 
                     by.y = c("state_name", "dist_name"), 
                     all.x = TRUE)
 
-colnames(df_IR_full_w_zones)
-# sum(is.na(df_IR_full_w_zones$climate_zone))
+colnames(df_IR_full_w_zones_6mo)
+
+### For 7mo dataset
+df_IR_full_w_zones_7mo <- merge(df_IR_full_7mo, df_zones, 
+                    by.x = c("meta_state_name", "meta_dist_name"), 
+                    by.y = c("state_name", "dist_name"), 
+                    all.x = TRUE)
+
+# sum(is.na(df_IR_full_w_zones_7mo$climate_zone))
 
 # Save the dataset as an RDS ----
-saveRDS(df_IR_full_w_zones, file = here(path_project, "processed-data", "1.4-processed-IR-data.rds"))
+saveRDS(df_IR_full_w_zones_6mo, file = here(path_project, "processed-data", "1.4-processed-IR-data-6mo.rds"))
+saveRDS(df_IR_full_w_zones_7mo, file = here(path_project, "processed-data", "1.4-processed-IR-data-7mo.rds"))
 print("saving complete")
-

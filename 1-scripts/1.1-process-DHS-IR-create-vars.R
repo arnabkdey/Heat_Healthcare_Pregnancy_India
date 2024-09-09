@@ -72,7 +72,7 @@ varlist_pnc_checkup <- c(
 varlist_ses <- c("v012", "v218", "v201", "v106", "v130", "s116", "v190", "v191", "v190a", "v191a", "v135")
 
 ## Access related variables
-varlist_access <- c("v467d")
+varlist_access <- c("v467d", "v123", "v124", "v125")
 
 ## Combine the individual varlists
 varlist_select <- c(varlist_meta, varlist_birth_history, varlist_index_to_birth, 
@@ -117,14 +117,10 @@ df_IR_long_full <- df_dhs_IR_raw_dt |>
     s359, s360a, s360b, s360c, s360d, # met ANM/LHV in last 3mo
     s361, s363a, s363b, s363c, s363d, # visited FLW last 3mo
     s368, s369, s370c, # visited health facility in last 3mo
-    everything()) |>  
-  ### Reshape from wide to long to get all births
-  tidyr::pivot_longer(cols = bidx_01:s486_6, 
-    names_to = c('.value', 'Birth'), 
-    names_pattern = '(.*)(\\_+)') |>
-  dplyr::select(-Birth) 
+    v123, v124, v125, # personal vehicle related variables
+    everything()) 
 
-nrow(df_IR_long_full) # 14,482,300
+nrow(df_IR_long_full) # 724,115
 rm(df_dhs_IR_raw_dt)
 
 # Step-4: Create variables for the IR dataset ----
@@ -136,32 +132,25 @@ df_IR_long_vars <- df_IR_long_full |>
   dplyr::mutate(meta_dist_name = as.factor(meta_dist_name)) |>
   dplyr::mutate(meta_state_name = as.factor(meta_state_name))
 rm(df_IR_long_full)
+
+
 ## Birth related vars ----
 df_IR_long_vars <- df_IR_long_vars |>
   ### create UID
-  dplyr::mutate(strata_id = as.numeric(factor(paste0(caseid, bidx)))) |>
-  ### Filter missing births
-  # dplyr::filter(!is.na(m15)) |>
-  ### Calculate DOB
-  dplyr::mutate(dob = as.Date(b18, origin = "1900-01-01")) |>
   ### Calculate Date of Interview
   dplyr::mutate(doi = as.Date(date_int_cdc, origin = "1900-01-01")) |>
-  ### Calculate difference between DOI and DOB in days
-  dplyr::mutate(diff_doi_dob = as.numeric(doi - dob, units = "days")) |>
   ### Get Day of the Week, month and year
   #### For DOI
   dplyr::mutate(month_int = lubridate::month(doi)) |>
   dplyr::mutate(year_int = lubridate::year(doi)) |>
   #### For DOB
-  dplyr::mutate(week_day = lubridate::wday(dob, label = TRUE)) |>
-  dplyr::mutate(week_of_year = lubridate::week(dob)) |>
-  dplyr::mutate(year_birth = lubridate::year(dob)) |> 
-  dplyr::mutate(month_birth = lubridate::month(dob)) |>
-  dplyr::mutate(season_birth = case_when(
-    month_birth %in% c(1, 2) ~ "winter",
-    month_birth %in% c(3, 4, 5) ~ "pre-monsson",
-    month_birth %in% c(6, 7, 8, 9) ~ "monsoon",
-    month_birth %in% c(10, 11, 12) ~ "post-monsoon")) 
+  dplyr::mutate(year_int = lubridate::year(doi)) |> 
+  dplyr::mutate(month_int = lubridate::month(doi)) |>
+  dplyr::mutate(season_int = case_when(
+    month_int %in% c(1, 2) ~ "winter",
+    month_int %in% c(3, 4, 5) ~ "pre-monsson",
+    month_int %in% c(6, 7, 8, 9) ~ "monsoon",
+    month_int %in% c(10, 11, 12) ~ "post-monsoon")) 
 
 ## Outcome variables ----
 ### Any contact with health system in last 3 months ----
@@ -228,7 +217,19 @@ df_IR_long_vars <- df_IR_long_vars |>
 ### Distance is a problem to access healthcare ----
 df_IR_long_vars <- df_IR_long_vars |> 
   dplyr::mutate(ses_access_issue_distance = 
-    ifelse(v467d == "big problem", "big-problem", "not-a-big-prob"))
+    ifelse(v467d == "big problem", "big-problem", "not-a-big-prob")) 
+
+### Vehicle ownership ----
+df_IR_long_vars <- df_IR_long_vars |> 
+  dplyr::mutate(ses_vehicle_ownership_any = case_when(
+    v123 == "yes" ~ "yes",
+    v124 == "yes" ~ "yes",
+    v125 == "yes" ~ "yes",
+    TRUE ~ "no")) |>
+  dplyr::mutate(ses_vehicle_ownership_motor = case_when(
+    v124 == "yes" ~ "yes",
+    v125 == "yes" ~ "yes",
+    TRUE ~ "no"))
 
 ## Maternal characteristics ----
 ### Currently pregnant ----
@@ -255,47 +256,52 @@ df_IR_long_vars <- df_IR_long_vars |>
   dplyr::mutate(mat_age_at_int_cat = forcats::fct_relevel(mat_age_at_int_cat, "15-24", "25-34", "35-49")) |>
   dplyr::mutate(mat_age_at_int_bi = forcats::fct_relevel(mat_age_at_int_bi, "15-34", "35-49"))
 
-### Maternal age at birth ----
-df_IR_long_vars <- df_IR_long_vars |> 
-  # First difference between date of interview and date of birth (in days)
-  dplyr::mutate(diff_doi_dob = doi - dob) |> 
-  # Calculate age at birth
-  dplyr::mutate(mat_age_at_birth = mat_age - as.numeric(diff_doi_dob, units = "days")/365.25) |> 
-  dplyr::mutate(mat_age_at_birth = round(mat_age_at_birth, 0)) |> 
-  # scale the age
-  dplyr::mutate(mat_age_at_birth_scaled = scale(mat_age_at_birth)) |> 
-  # Create age groups
-  dplyr::mutate(mat_age_at_birth_cat = case_when(
-    mat_age_at_birth < 20  ~ "15-19",
-    mat_age_at_birth >= 20 & mat_age_at_birth < 25  ~ "20-24",
-    mat_age_at_birth >= 25 & mat_age_at_birth < 30  ~ "25-29",
-    mat_age_at_birth >= 30 ~ "30-49")) |> 
-  dplyr::mutate(mat_age_at_birth_bi = ifelse(mat_age_at_birth < 25, "15-24", "25-49")) |> 
-  ## Relevel the factor
-  dplyr::mutate(mat_age_at_birth_cat = forcats::fct_relevel(mat_age_at_birth_cat, "15-19", "20-24", "25-29", "30-49")) |>
-  dplyr::mutate(mat_age_at_birth_bi = forcats::fct_relevel(mat_age_at_birth_bi, "15-24", "25-49"))
+## COVID variable ----
+df_IR_long_vars <- df_IR_long_vars |>
+  dplyr::mutate(covid = ifelse(doi >= as.Date("2020-03-24"), "post-covid", "pre-covid")) 
 
-# Step-5: Filter cases ----
-tabyl(df_IR_long_vars, v135) |> janitor::adorn_totals("row")
+tabyl(df_IR_long_vars, m14_1) |> janitor::adorn_totals("row")
+
+# Step-5: Select variables ----
+df_selected <- df_IR_long_vars |>
+  dplyr::select(starts_with("meta"), starts_with("dv"), 
+    doi, v135, v213, v214, covid, m14_2,
+    starts_with("ses"), starts_with("mat"),
+    contains("zone"), contains("int"), contains("birth"))
+
+# Step-6: Filter cases ----
+tabyl(df_selected, v135) |> janitor::adorn_totals("row")
 tabyl(df_IR_long_vars, v213) |> janitor::adorn_totals("row")
 tabyl(df_IR_long_vars, v214) |> janitor::adorn_totals("row")
 ls()
-df_filtered <- df_IR_long_vars |>
+
+## Filter to usual residents who are in their last three months of pregnancy ----
+df_filtered_6mo <- df_selected |>
   # Filter to usual residents
-  dplyr::filter(v135 == "usual resident") |> # 366,240 cases dropped; 14116060 cases remaining
+  dplyr::filter(v135 == "usual resident") |> # 18,312 cases dropped; 14116060 cases remaining
   # Filter to women who are in their last two months of pregnancy
-  dplyr::filter(v213 == "yes" & v214 >= 8) |> # 97820 cases remaining
-  # Drop cases with missing or don't know caste
-  dplyr::filter(!is.na(hh_caste) & hh_caste != "don't know") # 91,660 cases remaining 
+  dplyr::filter(v213 == "yes" & v214 >= 6) |> # 11482 cases remaining
+  # Filter post covid cases
+  dplyr::filter(covid == "pre-covid") # 3304 case dropped
 
-nrow(df_filtered) # 91,660
-rm(df_IR_long_vars)
+nrow(df_filtered_6mo) # 8,178
+tabyl(df_filtered_6mo, m14_2)
+tabyl(df_filtered_6mo, dv_no_contact_3mo)
+tabyl(df_filtered_6mo, month_int, year_int)
 
-# Step-6: Select variables ----
-df_selected <- df_filtered |>
-  dplyr::select(starts_with("meta"), starts_with("dv"), 
-    starts_with("ses"), starts_with("mat"),
-    dob, doi, contains("zone"), contains("int"), contains("birth"))
+## Filter to usual residents who are in their last two months of pregnancy ----
+df_filtered_7mo <- df_selected |>
+  # Filter to usual residents
+  dplyr::filter(v135 == "usual resident") |> # 18,312 cases dropped; 14116060 cases remaining
+  # Filter to women who are in their last two months of pregnancy
+  dplyr::filter(v213 == "yes" & v214 >= 7) |>
+  # Filter post covid cases
+  dplyr::filter(covid == "pre-covid")
+
+nrow(df_filtered_6mo) # 7,703
+tabyl(df_filtered_6mo, dv_no_contact_3mo)
+# rm(df_IR_long_vars)
 
 # Step-7: Save the files ----
-write_fst(df_selected, path = here(path_project, "processed-data", "1.1-dhs-IR-vars-created-full.fst"))
+write_fst(df_filtered_6mo, path = here(path_project, "processed-data", "1.1-dhs-IR-vars-created-6mo.fst"))
+write_fst(df_filtered_7mo, path = here(path_project, "processed-data", "1.1-dhs-IR-vars-created-7mo.fst"))

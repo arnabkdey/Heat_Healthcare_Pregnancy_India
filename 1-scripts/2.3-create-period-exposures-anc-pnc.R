@@ -1,5 +1,6 @@
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)
+library(climExposuR)
 source("paths-mac.R")
 
 # Read datasets -----
@@ -16,7 +17,7 @@ df_lt_vars_2014 <- df_lt_vars_2014 |> filter(!psu %in% psus_missing)
 sum(is.na(df_lt_vars_2014)) # no missing values
 
 ## Health datasets ----
-df_IR_full <- readRDS(here(path_project, "processed-data", "1.4-processed-IR-data.rds"))
+df_IR_full <- readRDS(here(path_project, "processed-data", "1.4-processed-IR-data-6mo.rds"))
 df_IR_full$psu <- df_IR_full$meta_psu
 
 # Function to calculate bins ----
@@ -89,6 +90,17 @@ df_hv_90_exp_scaled <- df_hv_90_exp |>
                 .names = "exp_{.col}_sd"))
 
 # Save as RDS ----
-saveRDS(df_hv_90_exp_scaled, here(path_project, "processed-data", "2.3-final-hv-data.rds"))
+## Save as rds file
+saveRDS(df_hv_90_exp_scaled, here(path_project, "processed-data", "2.3-final-hv-data-6mo.rds"))
+## Save as dta file
+df_selected <- df_hv_90_exp_scaled |>        
+  dplyr::select(
+        starts_with("exp_bin"),
+        starts_with("meta"), starts_with("dv"), 
+        doi, starts_with("ses"), starts_with("mat"),
+        contains("zone"), contains("int"), contains("birth"))
+
+haven::write_dta(df_selected, here(path_project, "processed-data", "2.3-final-hv-data-6mo.dta"))
+
 # df_hv_90_exp_scaled <- readRDS(here(path_project, "processed-data", "2.3-final-hv-data.rds"))
 # colnames(df_hv_90_exp_scaled)
