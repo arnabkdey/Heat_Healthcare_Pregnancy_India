@@ -1,6 +1,12 @@
-# title: "Read spatial datasets"
-# Load Packageslibrary(tidyverse)
-pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script reads and processes DHS geocoded PSU data and creates buffered India boundary files for spatial analysis.
+# @date: Dec 12, 2024
+
+# Load Packages ----------------------------------------------------------------
+pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, here)
 pacman::p_load(sf, sp, raster, terra, tidyterra, ncdf4, rnaturalearth)
 source("paths-mac.R")
 # Read Geo Coded Datasets

@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script creates heat wave and temperature exceedance variables using absolute temperature thresholds and consecutive day criteria.
+# @date: Dec 12, 2024
+
 rm(list = ls())
 pacman::p_load(dplyr, janitor, data.table, fst, openxlsx, here, googledrive)
 library(climExposuR)

@@ -1,4 +1,10 @@
-# title: "Merge climate zones into IR dataset"
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script merges climate zone classifications with processed individual-level DHS data.
+# @date: Dec 12, 2024
+
 # Load packages ----- 
 pacman::p_load(dplyr, janitor, data.table, fst, openxlsx, here, googledrive)
 # rm(list = ls())

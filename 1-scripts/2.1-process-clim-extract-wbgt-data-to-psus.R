@@ -1,6 +1,9 @@
-# title: "Link the daily temp data with IR data"
-# This script reads the geocoded PSU data from DHS and extracts daily gridded climate data for the past n years for each PSU. 
-# The result is a HUGE dataset where each PSU has n\*365 rows of data, where n is the number of years of climate data available.
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script extracts daily WBGT, dry bulb temperature, and precipitation data for each DHS PSU location.
+# @date: Dec 12, 2024
 
 # Load Packages ----
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)

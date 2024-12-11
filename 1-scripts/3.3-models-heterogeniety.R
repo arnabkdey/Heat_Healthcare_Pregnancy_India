@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script analyzes effect heterogeneity by comparing model coefficients across different population subgroups.
+# @date: Dec 12, 2024
+
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, here)
 pacman::p_load(parallel, future, furrr, doParallel, foreach, future.apply)
@@ -39,6 +46,8 @@ head(df_full)
 df_rural_urban <- compare_model_coefficients(models_all[["model_rural"]], models_all[["model_urban"]], varlist_exp, "Rural", "Urban")
 df_access <- compare_model_coefficients(models_all[["model_access_yes"]], models_all[["model_access_no"]], varlist_exp, "big-prob", "not-big-prob")
 df_wealth <- compare_model_coefficients(models_all[["model_wealth_poor"]], models_all[["model_wealth_rich"]], varlist_exp, "poorer", "richer")
+df_edu <- compare_model_coefficients(models_all[["model_edu_no"]], models_all[["model_edu_yes"]], varlist_exp, "no-education", "some-education") 
+
 
 # Function for wald test ----
 func_z_test <- function(df) {
@@ -72,9 +81,11 @@ func_z_test <- function(df) {
 df_z_rural_urban <- func_z_test(df_rural_urban)
 df_z_access <- func_z_test(df_access)
 df_z_wealth <- func_z_test(df_wealth)
+df_z_edu <- func_z_test(df_edu)
 
 # Save ----
 df_z_rural_urban |> write_csv(here(path_project, "outputs", "models", "stata-models", "z_test_rural_urban.csv"))
 df_z_access |> write_csv(here(path_project, "outputs", "models", "stata-models", "z_test_access.csv"))
 df_z_wealth |> write_csv(here(path_project, "outputs", "models", "stata-models", "z_test_wealth.csv"))
+df_z_edu |> write_csv(here(path_project, "outputs", "models", "stata-models", "z_test_edu.csv"))
 

@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script provides functions for calculating confidence intervals with flexible confidence levels and scale options.
+# @date: Dec 12, 2024
+
 coefcis <- function(coef, se, conf.level = 0.97, exponentiate = TRUE) {
   # Calculate z-score based on confidence level
   z_score <- qnorm((1 + conf.level) / 2)

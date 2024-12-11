@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script provides functions for generating survey-weighted descriptive statistics and comparison tables.
+# @date: Dec 12, 2024
+
 #' Compare groups using survey-weighted data
 #' @param data A data frame
 #' @param dep_var A character string specifying the dependent variable

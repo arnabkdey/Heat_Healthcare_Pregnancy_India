@@ -1,4 +1,9 @@
-# Title: "Linking climate regions in india with districts"
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script assigns climate zones to Indian districts using Beck's classification system and DHS spatial boundaries.
+# @date: Dec 12, 2024
 
 # Data source (Beck et al)
 #https://www.nature.com/articles/sdata2018214/tables/3

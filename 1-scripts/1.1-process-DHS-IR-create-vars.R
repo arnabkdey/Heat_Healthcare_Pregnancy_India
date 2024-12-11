@@ -1,11 +1,20 @@
-# title: "Create variables for the IR dataset"
-# load-packages
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script processes the DHS Individual Recode dataset to create analysis 
+## variables including healthcare contact, socioeconomic status, and maternal characteristics. 
+# @date: Dec 12, 2024
+
+
+# load packages ---------------------------------------------------------------
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)
-here()
+
+# paths -----------------------------------------------------------------------
 source("paths-mac.R")
 
-# Step-1: Identify variables for the paper ----
+# Step-1: Identify variables for the paper ------------------------------------
 ## Meta variables
 varlist_meta <- c("caseid", "v021", "v025", "v023", "sdist", "v024", "v005", "v008a")
 
@@ -80,7 +89,7 @@ varlist_select <- c(varlist_meta, varlist_birth_history, varlist_index_to_birth,
                     varlist_preg_comp, varlist_del_comp, varlist_skin_care, varlist_pnc_checkup,
                     varlist_ses, varlist_access)
 
-# Step-2: Read the data ----
+# Step-2: Read the data -------------------------------------------------------
 ## Load raw dataset
 df_dhs_IR_raw <- haven::read_dta(here(path_dhs_india_2019, "IAIR7EFL.DTA"),
                     col_select = all_of(varlist_select))
@@ -91,7 +100,7 @@ df_dhs_IR_raw_dt <- setDT(df_dhs_IR_raw)
 nrow(df_dhs_IR_raw_dt) # 724,115
 rm(df_dhs_IR_raw)
 
-# Step-3: Convert from wide to long ----
+# Step-3: Convert from wide to long -------------------------------------------
 df_IR_long_full <- df_dhs_IR_raw_dt |>
   dplyr::select(
     "caseid", 
@@ -123,7 +132,7 @@ df_IR_long_full <- df_dhs_IR_raw_dt |>
 nrow(df_IR_long_full) # 724,115
 rm(df_dhs_IR_raw_dt)
 
-# Step-4: Create variables for the IR dataset ----
+# Step-4: Create variables for the IR dataset ---------------------------------
 ## Meta variables ----
 df_IR_long_vars <- df_IR_long_full |> 
   dplyr::mutate(meta_wt_final = wt_raw / 1000000) |> 
@@ -153,14 +162,14 @@ df_IR_long_vars <- df_IR_long_vars |>
     month_int %in% c(10, 11, 12) ~ "post-monsoon")) 
 
 ## Outcome variables ----
-### Any contact with health system in last 3 months ----
+### Any contact with health system in last 3 months
 df_IR_long_vars <- df_IR_long_vars |> 
   dplyr::mutate(dv_no_contact_3mo = ifelse(s359 == "yes" | s361 == "yes" | s368 == "yes", 0, 1))
 
 tabyl(df_IR_long_vars, dv_no_contact_3mo) |> janitor::adorn_totals("row")
 
 ## SES Variables ----
-### Wealth - Binary -----
+### Wealth - Binary
 df_IR_long_vars <- df_IR_long_vars |>
   # Two-level wealth variable cut at the median
   dplyr::mutate(ses_wealth_bi = ifelse(hh_wealth_score_ru_og > quantile(hh_wealth_score_ru_og, 0.5), "rich", "poor")) |> 
@@ -171,7 +180,7 @@ df_IR_long_vars <- df_IR_long_vars |>
   # relevel the factor
   dplyr::mutate(ses_wealth_bi_richer = forcats::fct_relevel(ses_wealth_bi_richer, "richer", "poorer")) 
 
-### Religion ----
+### Religion
 df_IR_long_vars <- df_IR_long_vars |>
   # Two-level variables for religion: Hindu and other
   dplyr::mutate(ses_religion_2_hindu = if_else(hh_religion == "hindu", "hindu", "other")) |>
@@ -194,7 +203,7 @@ df_IR_long_vars <- df_IR_long_vars |>
   dplyr::mutate(ses_religion_3 = forcats::fct_relevel(ses_religion_3, "hindu", "muslim", "other")) |> 
   dplyr::mutate(ses_religion_4 = forcats::fct_relevel(ses_religion_4, "hindu", "muslim", "christian", "other")) 
 
-### Caste ---- 
+### Caste
 df_IR_long_vars <- df_IR_long_vars |>
   # Two-level variables for caste
   dplyr::mutate(ses_caste_2 = if_else(hh_caste == "none of them", "General", "SC/ST/OBC")) |> 
@@ -219,7 +228,7 @@ df_IR_long_vars <- df_IR_long_vars |>
   dplyr::mutate(ses_access_issue_distance = 
     ifelse(v467d == "big problem", "big-problem", "not-a-big-prob")) 
 
-### Vehicle ownership ----
+### Vehicle ownership
 df_IR_long_vars <- df_IR_long_vars |> 
   dplyr::mutate(ses_vehicle_ownership_any = case_when(
     v123 == "yes" ~ "yes",
@@ -232,16 +241,16 @@ df_IR_long_vars <- df_IR_long_vars |>
     TRUE ~ "no"))
 
 ## Maternal characteristics ----
-### Currently pregnant ----
+### Currently pregnant
 df_IR_long_vars <- df_IR_long_vars |> 
   dplyr::mutate(mat_cur_preg = ifelse(v213 == "yes", 1, 0))
 
-### Parity ----
+### Parity
 df_IR_long_vars <- df_IR_long_vars |> 
   dplyr::mutate(mat_parity_bi = ifelse(mat_parity == 1, "Primiparous", "Multiparous")) |> 
   dplyr::mutate(mat_parity_bi = forcats::fct_relevel(mat_parity_bi, "Primiparous", "Multiparous"))
 
-### Maternal age at interview -----
+### Maternal age at interview
 df_IR_long_vars <- df_IR_long_vars |> 
   # scale the continuous age variable
   dplyr::mutate(mat_age_at_int_scaled = scale(mat_age))  |> 
@@ -262,14 +271,14 @@ df_IR_long_vars <- df_IR_long_vars |>
 
 tabyl(df_IR_long_vars, m14_1) |> janitor::adorn_totals("row")
 
-# Step-5: Select variables ----
+# Step-5: Select variables ----------------------------------------------------
 df_selected <- df_IR_long_vars |>
   dplyr::select(starts_with("meta"), starts_with("dv"), 
     doi, v135, v213, v214, covid, m14_2,
     starts_with("ses"), starts_with("mat"),
     contains("zone"), contains("int"), contains("birth"))
 
-# Step-6: Filter cases ----
+# Step-6: Filter cases --------------------------------------------------------
 tabyl(df_selected, v135) |> janitor::adorn_totals("row")
 tabyl(df_IR_long_vars, v213) |> janitor::adorn_totals("row")
 tabyl(df_IR_long_vars, v214) |> janitor::adorn_totals("row")
@@ -302,6 +311,6 @@ nrow(df_filtered_6mo) # 7,703
 tabyl(df_filtered_6mo, dv_no_contact_3mo)
 # rm(df_IR_long_vars)
 
-# Step-7: Save the files ----
+# Step-7: Save the files ------------------------------------------------------
 write_fst(df_filtered_6mo, path = here(path_project, "processed-data", "1.1-dhs-IR-vars-created-6mo.fst"))
 write_fst(df_filtered_7mo, path = here(path_project, "processed-data", "1.1-dhs-IR-vars-created-7mo.fst"))

@@ -19,6 +19,9 @@
 *.Rproj
 .Rproj.user/
 
+# MacOS files
+*.DS_Store
+
 # R Environment Variables and profile
 .Renviron
 .Rprofile
@@ -33,6 +36,7 @@
 # Path and dummy files
 dummy*.R
 paths*.R
+9-script-archives/
 
 # dhs files and folder
 dhs/

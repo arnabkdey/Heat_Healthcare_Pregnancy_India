@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script replicates and extends the Stata analyses using R's mixed-effects modeling capabilities.
+# @date: Dec 12, 2024
+
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, here)
 pacman::p_load(parallel, future, furrr, doParallel, foreach, future.apply)
@@ -45,6 +52,14 @@ fmla_access <- as.formula(paste("dv_no_contact_3mo ~ ",
                                 paste(varlist_exp, collapse = " + "), " + ", 
                                 paste(setdiff(varlist_fixed, "ses_access_issue_distance"), collapse = " + "), " + ", 
                                 "(1 | meta_state_name)"))
+
+df_paper <- df_paper |> mutate(mat_edu_bi = ifelse(mat_edu_level == "no education", "no-education", "some-education"))
+tabyl(df_paper, mat_edu_bi)
+
+fmla_edu <- as.formula(paste("dv_no_contact_3mo ~ ", 
+                             paste(varlist_exp, collapse = " + "), " + ", 
+                             paste(setdiff(varlist_fixed, "mat_edu_bi"), collapse = " + "), " + ", 
+                             "(1 | meta_state_name)"))
 
 
 # Models ----
@@ -95,6 +110,21 @@ model_access_yes <- glmer(fmla_access,
                         family = binomial(link = "logit"))
 
 
+## Education models ----
+model_edu_no <- glmer(fmla_edu, 
+                      data = df_paper,
+                      subset = mat_edu_bi == "no-education",
+                      family = binomial(link = "logit"))
+
+
+model_edu_yes <- glmer(fmla_edu,
+                        data = df_paper,
+                        subset = mat_edu_bi == "some-education",
+                        family = binomial(link = "logit"))
+
+summary(model_edu_no)                        
+
+
 # Save all objects starting with model as an RDS ----
 ## Get names of all objects that start with "model_"
 model_names <- ls(pattern = "^model_")
@@ -103,4 +133,4 @@ list_models <- mget(model_names)
 # names(list_models)
 
 ## Save the list of models
-saveRDS(list_models, here(path_project, "processed-data", "list-models-6mo.rds"))
+saveRDS(list_models, here(path_project, "processed-data", "3.2-list-models-6mo.rds"))

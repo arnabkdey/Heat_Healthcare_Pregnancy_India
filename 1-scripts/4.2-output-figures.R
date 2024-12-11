@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script creates publication-ready figures visualizing main effects and effect modification results.
+# @date: Dec 12, 2024
+
 # Load required libraries
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, openxlsx, googledrive, here, beepr, Hmisc)
@@ -32,7 +39,7 @@ df_plot_full <- all_models |>
 p_full <- func_plot_full_model(df_plot_full, title = "") 
 
 ### Save plot
-ggsave(here(path_project, "outputs", "figures", "final-figs", "fig-1-full-model.png"), p_full, width = 8, height = 8, dpi = 600)
+ggsave(here(path_project, "outputs", "figures", "final-figs", "fig-1-full-model.jpeg"), p_full, width = 8, height = 8, dpi = 600)
 
 ## Effect modification by Rural/Urban ----
 ### Data for plotting ----

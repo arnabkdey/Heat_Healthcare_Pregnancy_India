@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script contains functions for creating standardized visualizations of model results and effect modifications.
+# @date: Dec 12, 2024
+
 library(ggplot2)
 library(dplyr)
 library(tidyr)

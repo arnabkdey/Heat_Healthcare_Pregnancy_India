@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------------
+# @project: Heat and healthcare contact during pregnancy in India
+# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @organization: Scripps Institution of Oceanography, UC San Diego
+# @description: This script defines functions for calculating temperature bin exposures over specified time periods.
+# @date: Dec 12, 2024
+
 func_calc_bins_period <- function(df_health, df_lt_clim,
                                   start_date_var, add_days, subtract_days, 
                                   psu_var = "psu", clim_var = "max_temp_wb") {
