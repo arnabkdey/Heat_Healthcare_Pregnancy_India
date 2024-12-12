@@ -24,7 +24,7 @@ ls()
 varlist_ses <- c("ses_wealth_bi_richer",
                   "mat_edu_level",
                   "ses_access_issue_distance", 
-                  "meta_rural")            
+                  "meta_rural")
 
 varlist_exp_bin <- c("exp_bin_below_10_10", "exp_bin_10_15_10", "exp_bin_25_30_10", "exp_bin_above_30_10")
 colnames(df_paper_final |> select(starts_with("mat")))
@@ -37,8 +37,7 @@ df_paper_final <- df_paper_final |>
 # Create survey object
 svy_object <- svydesign(ids = ~1,
                 data = df_paper_final,
-              weights = df_paper_final$wt_final)
-
+                weights = df_paper_final$wt_final)
 
 # Column percentages for total FLW visits ----
 df_paper_final$dv_no_contact_3mo <- as.factor(df_paper_final$dv_no_contact_3mo)

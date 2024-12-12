@@ -43,7 +43,7 @@ This Stata script performs mixed-effects logistic regression analyses. It proces
 ### [1-scripts/3.2-models-in-R](1-scripts/3.2-models-in-R.R)
 This R script replicates and extends the Stata analyses using mixed-effects modeling capabilities. It creates model formulas for the full model and various stratified analyses, using `glmer` from the `lme4` package. The script includes additional binary categorization of education level and saves models as R objects for further analysis.
 
-### [1-scripts/3.3-models-heterogeniety](1-scripts/3.3-models-heterogeniety.R)
+### [1-scripts/3.3-models-heterogeniety-tests](1-scripts/3.3-models-heterogeniety-tests.R)
 This script analyzes heterogeneity in effect estimates by comparing coefficients between stratified models for rural vs urban areas, different levels of healthcare access, wealth groups, and education levels. It conducts formal statistical tests for heterogeneity using Z-tests and exports results to CSV files.
 
 ## 4. Output Generation Scripts
@@ -81,10 +81,9 @@ graph TD
     G --> K
     K --> L[3.1: Stata Models]
     K --> M[3.2: R Models]
-    L --> N[3.3: Heterogeneity Analysis]
-    M --> N
-    N --> O[4.1: Generate Tables]
+    M --> N[3.3: Heterogeneity Test]
     N --> P[4.2: Create Figures]
+    M --> P
 ```
 
 # Key Variables Created

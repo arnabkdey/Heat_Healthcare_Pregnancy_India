@@ -1,6 +1,6 @@
 // Read dataset
-use "Z:\Shared drives\Benmarhnia Lab\Arnab\project-datasets\dissertation\heat-and-flw-visits-India\processed-data\2.3-final-hv-data-6mo.dta"
-cd "Z:\Shared drives\Benmarhnia Lab\Arnab\project-datasets\dissertation\heat-and-flw-visits-India\outputs\models\stata-models"
+use "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim-papers\heat\heat-and-flw-visits\processed-data\2.3-final-hv-data-6mo.dta"
+cd "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim-papers\heat\heat-and-flw-visits\outputs\models\stata-models"
 
 
 // Process variables
@@ -122,3 +122,29 @@ melogit dv_no_contact_3mo ///
 
 outreg2 using em-poorer.xls, replace excel dec(3) eform sideway stat(coef ci) level(95) ///
     keep(exp_bin_below_10_10 exp_bin_10_15_10 exp_bin_25_30_10 exp_bin_above_30_10) 
+
+//// Education
+////// Primary or less
+melogit dv_no_contact_3mo ///
+		exp_bin_below_10_10 exp_bin_10_15_10 ///
+		exp_bin_25_30_10 exp_bin_above_30_10  ///
+		ses_access_issue_distance_num  ///
+		i.ses_wealth_bi_richer ///
+		meta_rural ////
+        i.month_int if mat_edu_level == 3 || meta_state_name_num:, vce(robust) or
+		
+outreg2 using em-less-edu.xls, replace excel dec(3) eform sideway stat(coef ci) level(95) ///
+    keep(exp_bin_below_10_10 exp_bin_10_15_10 exp_bin_25_30_10 exp_bin_above_30_10) 
+	
+////// Higher education
+melogit dv_no_contact_3mo ///
+		exp_bin_below_10_10 exp_bin_10_15_10 ///
+		exp_bin_25_30_10 exp_bin_above_30_10  ///
+		ses_access_issue_distance_num  ///
+		i.ses_wealth_bi_richer ///
+		meta_rural ////
+        i.month_int if mat_edu_level != 1 || meta_state_name_num:, vce(robust) or
+		
+outreg2 using em-high-edu.xls, replace excel dec(3) eform sideway stat(coef ci) level(95) ///
+    keep(exp_bin_below_10_10 exp_bin_10_15_10 exp_bin_25_30_10 exp_bin_above_30_10) 
+

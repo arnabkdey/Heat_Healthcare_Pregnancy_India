@@ -55,70 +55,49 @@ compare_model_coefficients <- function(model1, model2, varlist_exp, model1_name 
 
 # Function to full model ----
 func_plot_full_model <- function(df_plot, title = "Here goes the title") {
-    plot <- ggplot(df_plot, aes(x = OR, y = term)) +
-        # facet_wrap(~threshold_label, ncol = 1) +
-        geom_vline(xintercept = 1, colour = "black", linetype = "dashed", linewidth = 1.5) +
-        geom_text(aes(label = sprintf("%.2f", OR)), vjust = -1.5, hjust = 0.5, size = 3.5) +
-        geom_point(color = "#dd1c77", size = 3) +
-        geom_pointrange(aes(xmin = ci_low, xmax = ci_high), color = "#dd1c77", linewidth = 1.5, alpha = 0.5) +
-        labs(
-            x = "Odds Ratio [95% CI]",
-            y = "Temperature Bins",
-            title = title 
-        ) +
-        xlim(0.4, 2) +
-        theme_classic(base_size = 14, base_family = "Times New Roman") +
-        theme(
-            panel.grid.major = element_line(linewidth=0.25), 
-            panel.grid.minor.x = element_line(linewidth=0.15),
-            strip.background = element_blank(),  
-            strip.placement = "outside",  
-            strip.text.y.left = element_text(angle = 0),
-            strip.text = element_text(face = "bold", size = 14),
-            axis.ticks = element_blank(), 
-            axis.title.x = element_text(margin = margin(t = 15)),
-            axis.title.y = element_text(margin = margin(r = 15)),
-            panel.border = element_blank(),
-            legend.position="none",
-            panel.spacing=unit(0, "cm"),
-            plot.title = element_text(hjust = 0.5, face = "bold", size = 16)  # Center the title and make it bold
-        )
-    return(plot)
+  
+  # Calculate the range of OR values including CI bounds
+  x_range <- range(c(df_plot$ci_low, df_plot$ci_high), na.rm = TRUE)
+  # Add some padding to the range
+  x_range <- c(min(x_range) * 0.8, max(x_range) * 1.2)
+  
+  # Plot
+  plot <- ggplot(df_plot, aes(x = OR, y = term)) +
+    # facet_wrap(~threshold_label, ncol = 1) +
+    geom_vline(xintercept = 1, colour = "gray50", linetype = "dashed", linewidth = 0.5) +
+    geom_text(aes(label = sprintf("%.2f", OR)), vjust = -1.5, hjust = 0.5, size = 3.5) +
+    geom_point(color = "#dd1c77", size = 3) +
+    geom_pointrange(aes(xmin = ci_low, xmax = ci_high), color = "#dd1c77", linewidth = 0.5, alpha = 0.5) +
+    labs(
+      x = "Odds Ratio [95% CI]",
+      y = "Temperature Bins",
+      title = title 
+    ) +
+    scale_x_log10(
+      breaks = scales::breaks_log(n = 8),
+      labels = scales::label_number(accuracy = 0.01),
+      limits = x_range
+    ) +
+    theme_classic(base_size = 14, base_family = "Times New Roman") +
+    theme(
+      panel.grid.major = element_line(linewidth=0.25), 
+      panel.grid.minor.x = element_line(linewidth=0.15),
+      strip.background = element_blank(),  
+      strip.placement = "outside",  
+      strip.text = element_text(face = "bold", size = 14),
+      axis.ticks = element_blank(), 
+      axis.title.x = element_text(margin = margin(t = 15)),
+      axis.title.y = element_text(margin = margin(r = 15)),
+      panel.border = element_blank(),
+      legend.position="none",
+      panel.spacing=unit(0, "cm"),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 16) 
+    )
+  return(plot)
 }
+
 
 # Function to plot effect modifiers ----
-func_plot_em <- function(comparison_data, title = "Coefficient Comparison", 
-                                        x_label = "Temperature Bins", 
-                                        y_label = "Odds Ratio [95% CI]",
-                                        colors = c("Rural" = "#dd1c77", "Urban" = "#756bb1")) {
-  
-  p <- ggplot(df_rural, aes(x = term, y = OR, color = level)) +
-    geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
-    geom_point(position = position_dodge(width = 0.5), size = 3) +
-    geom_pointrange(aes(ymin = ci_low, ymax = ci_high), 
-                  position = position_dodge(width = 0.5)) +
-    geom_text(aes(label = sprintf("%.2f", OR)), 
-              position = position_dodge(width = 0.5),
-              vjust = -1.5, hjust = 0.5, size = 3) +  # Add data labels
-    coord_flip() +
-    # scale_y_continuous(trans = 'log10', labels = label_number(accuracy = 0.01)) +  # Log scale for y-axis
-    scale_color_manual(values = colors) +  # Use custom colors
-    theme_minimal() +
-    theme(
-      legend.position = "bottom",
-      axis.text.y = element_text(angle = 0, hjust = 1),
-      panel.grid.major.y = element_blank()
-    ) +
-    labs(
-      title = title,
-      x = x_label,
-      y = y_label,
-      color = "Level"
-    )    
-  return(p)
-}
-
-
 func_plot_em <- function(comparison_data, title = "Coefficient Comparison", 
                          x_label = "Temperature Bins", 
                          y_label = "Odds Ratio [95% CI]",
@@ -141,6 +120,12 @@ func_plot_em <- function(comparison_data, title = "Coefficient Comparison",
     names(colors) <- levels
   }
   
+  # Calculate the range of OR values including CI bounds
+  y_range <- range(c(comparison_data$ci_low, comparison_data$ci_high), na.rm = TRUE)
+  # Add some padding to the range
+  y_range <- c(min(y_range) * 0.8, max(y_range) * 1.2)
+  
+  
   p <- ggplot(comparison_data, aes(x = term, y = OR, color = level)) +
     geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
@@ -150,6 +135,12 @@ func_plot_em <- function(comparison_data, title = "Coefficient Comparison",
               position = position_dodge(width = 0.5),
               vjust = -1.5, hjust = 0.5, size = 3) +
     coord_flip() +
+    # Add log scale with appropriate breaks
+    scale_y_log10(
+      breaks = scales::breaks_log(n = 8),
+      labels = scales::label_number(accuracy = 0.01),
+      limits = y_range
+    ) +    
     scale_color_manual(values = colors) +
     theme_minimal() +
     theme(

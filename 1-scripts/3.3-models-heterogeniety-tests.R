@@ -20,7 +20,7 @@ source(here("1-scripts", "6.3-function-to-plot-models.R"))
 source(here("1-scripts", "6.4-function-to-calc-cis.R"))
 
 # Read all models ----
-models_all <- readRDS(here(path_project, "processed-data", "list-models-6mo.rds"))
+models_all <- readRDS(here(path_project, "processed-data", "3.2-list-models-6mo.rds"))
 names(models_all)
 
 # Create dataframes for plotting ----

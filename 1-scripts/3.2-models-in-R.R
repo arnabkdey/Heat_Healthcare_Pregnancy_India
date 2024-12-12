@@ -53,7 +53,7 @@ fmla_access <- as.formula(paste("dv_no_contact_3mo ~ ",
                                 paste(setdiff(varlist_fixed, "ses_access_issue_distance"), collapse = " + "), " + ", 
                                 "(1 | meta_state_name)"))
 
-df_paper <- df_paper |> mutate(mat_edu_bi = ifelse(mat_edu_level == "no education", "no-education", "some-education"))
+df_paper <- df_paper |> mutate(mat_edu_bi = ifelse(mat_edu_level == "no education" | mat_edu_level == "primary", "primary-or-less", "higher-or-secondary"))
 tabyl(df_paper, mat_edu_bi)
 
 fmla_edu <- as.formula(paste("dv_no_contact_3mo ~ ", 
@@ -111,15 +111,16 @@ model_access_yes <- glmer(fmla_access,
 
 
 ## Education models ----
+df_paper <- df_paper |> mutate(mat_edu_bi = ifelse(mat_edu_level == "no education" | mat_edu_level == "primary", "primary-or-less", "higher-or-secondary"))
 model_edu_no <- glmer(fmla_edu, 
                       data = df_paper,
-                      subset = mat_edu_bi == "no-education",
+                      subset = mat_edu_bi == "primary-or-less",
                       family = binomial(link = "logit"))
 
 
 model_edu_yes <- glmer(fmla_edu,
                         data = df_paper,
-                        subset = mat_edu_bi == "some-education",
+                        subset = mat_edu_bi == "higher-or-secondary",
                         family = binomial(link = "logit"))
 
 summary(model_edu_no)                        
