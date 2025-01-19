@@ -27,17 +27,16 @@
 .Rprofile
 .Rproj.user
 
-# Data files
-2-data/
-
-# Outputs
-3-outputs/
-
 # Path and dummy files
 dummy*.R
 paths*.R
 9-script-archives/
 
-# dhs files and folder
+# lint files
+.lintr
+
+# MacOS files
+*.DS_Store 
+
+# DHS files
 dhs/
-rdhs.json

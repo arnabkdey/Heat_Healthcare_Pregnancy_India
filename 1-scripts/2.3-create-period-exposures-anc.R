@@ -14,6 +14,7 @@ source("paths-mac.R")
 ## Long-term WBGT data ----
 df_lt_vars_2014 <- read_fst(here(path_project, "processed-data", "2.2-df_wbgt_hw_exceed_vars.fst"), as.data.table = T)
 df_lt_vars_2014$psu <- as.factor(df_lt_vars_2014$psu)
+colnames(df_lt_vars_2014)
 
 ### Address missing wbgt data ----
 df_missing <- df_lt_vars_2014 |> filter(is.na(max_temp_wb))
@@ -25,7 +26,11 @@ sum(is.na(df_lt_vars_2014)) # no missing values
 
 ## Health datasets ----
 df_IR_full <- readRDS(here(path_project, "processed-data", "1.4-processed-IR-data-6mo.rds"))
+colnames(df_IR_full)
+min(df_IR_full$doi)
+max(df_IR_full$doi)
 df_IR_full$psu <- df_IR_full$meta_psu
+length(unique(df_IR_full$psu))
 
 # Function to calculate bins ----
 source(here("1-scripts", "6.1-function-to-calc-temp-bins.R"))
@@ -98,7 +103,8 @@ df_hv_90_exp_scaled <- df_hv_90_exp |>
 
 # Save as RDS ----
 ## Save as rds file
-saveRDS(df_hv_90_exp_scaled, here(path_project, "processed-data", "2.3-final-hv-data-6mo.rds"))
+df_hv_90_exp_scaled |> saveRDS(here(path_project, "processed-data", "2.3-final-hv-data-6mo.rds"))
+
 ## Save as dta file
 df_selected <- df_hv_90_exp_scaled |>        
   dplyr::select(

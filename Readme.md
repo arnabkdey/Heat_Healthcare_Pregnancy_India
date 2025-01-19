@@ -8,8 +8,7 @@ Health outcomes and demographic variables can be obtained from the Demographic a
 * DHS dataset (https://www.dhsprogram.com/data/available-datasets.cfm)
   - Individual Recode (IR) dataset: IAIR7EFL.DTA
   - Geographic data: IAGE7AFL.shp
-* Beck Climate Classification dataset
-  - Available at: Beck_KG_V1_present_0p0083.tif
+* WBGT-Max: https://zenodo.org/records/8021197
 
 # Data Processing and Analysis Scripts
 
@@ -33,7 +32,7 @@ This script links daily temperature data with DHS PSU locations. It extracts var
 ### [1-scripts/2.2-create-hw-and-exceedance-vars](1-scripts/2.2-create-hw-and-exceedance-vars.R)
 This script processes temperature data to create heat wave and temperature exceedance variables. It creates absolute temperature cutoff variables at 28°C, 30°C, and 32°C WBGT and generates heat wave variables for different consecutive day thresholds ranging from 2 to 5 days. The script also calculates magnitude of temperature exceedance above thresholds.
 
-### [1-scripts/2.3-create-period-exposures-anc-pnc](1-scripts/2.3-create-period-exposures-anc-pnc.R)
+### [1-scripts/2.3-create-period-exposures-anc](1-scripts/2.3-create-period-exposures-anc.R)
 This script calculates exposure variables for specific time periods related to healthcare visits. It processes WBGT data and health outcome data to calculate 90-day exposure periods for home visits. The script creates multiple exposure metrics and scales them appropriately, producing final datasets in both R and Stata formats.
 
 ## 3. Statistical Analysis Scripts
@@ -50,7 +49,10 @@ This script analyzes heterogeneity in effect estimates by comparing coefficients
 ### [1-scripts/4.1-output-table1](1-scripts/4.1-output-table1.R)
 This script generates descriptive statistics tables using survey-weighted data. It creates a survey design object and generates tables for socioeconomic variables, rural/urban status, and temperature exposure variables. The script calculates column percentages for healthcare contact, weighted means and standard deviations for maternal age, and weighted percentages for outcome variables.
 
-### [1-scripts/4.2-output-figures](1-scripts/4.2-output-figures.R)
+### [1-scripts/4.2-output-table2](1-scripts/4.2-output-table2.R)
+This script generates survey-weighted cross-tabulations examining the relationship between temperature exposure and various socioeconomic indicators in India. It processes temperature exposure data by combining certain temperature bins (15-20°C and 20-25°C) and generates tables for key variables including healthcare utilization, household wealth, maternal education, distance to healthcare facilities, and urban/rural residence. The script creates a survey design object to account for survey weights and calculates weighted means and standard deviations for each combination of socioeconomic variable and temperature exposure category. 
+
+### [1-scripts/4.3-output-figures](1-scripts/4.3-output-figures.R)
 This script creates publication-ready figures visualizing the model results. It processes model outputs and creates multiple visualization types including forest plots for full model results and effect modification plots for various stratifications. The script implements consistent styling across figures and saves high-resolution outputs.
 
 ## 5. Utility Functions
@@ -82,7 +84,7 @@ graph TD
     K --> L[3.1: Stata Models]
     K --> M[3.2: R Models]
     M --> N[3.3: Heterogeneity Test]
-    N --> P[4.2: Create Figures]
+    N --> P[4.3: Create Figures]
     M --> P
 ```
 
