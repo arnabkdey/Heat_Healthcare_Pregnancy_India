@@ -16,7 +16,7 @@ pacman::p_load(sf, sp, raster, terra, tidyterra, ncdf4, rnaturalearth)
 pacman::p_load(smoothr, tiff, rasterVis, tmap, rdhs, googledrive)
 library(parallel)
 library(plyr)
-source("paths-mac.R")
+source("paths_mac.R")
 
 
 # Read datasets  ---------

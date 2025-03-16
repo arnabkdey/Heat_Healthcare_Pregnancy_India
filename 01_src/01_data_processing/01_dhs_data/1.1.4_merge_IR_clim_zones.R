@@ -8,7 +8,7 @@
 # Load packages ----- 
 pacman::p_load(dplyr, janitor, data.table, fst, openxlsx, here, googledrive)
 # rm(list = ls())
-source("paths-mac.R")
+source("paths_mac.R")
 
 # Read datasets ----- 
 ### IR vars created datasets -----

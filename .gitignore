@@ -10,9 +10,7 @@
 
 # Session Data files
 .RData
-.RDataTmp
-
-# User-specific files
+.RDataTmp\nn# User-specific files
 .Ruserdata
 
 # RStudio files
@@ -20,7 +18,7 @@
 .Rproj.user/
 
 # MacOS files
-*.DS_Store
+.DS_Store
 
 # R Environment Variables and profile
 .Renviron
@@ -28,15 +26,15 @@
 .Rproj.user
 
 # Path and dummy files
-dummy*.R
+dummy*.*
 paths*.R
-9-script-archives/
 
 # lint files
 .lintr
 
 # MacOS files
-*.DS_Store 
+*.DS_Store
 
-# DHS files
-dhs/
+# Other folders
+archives/
+sandbox/

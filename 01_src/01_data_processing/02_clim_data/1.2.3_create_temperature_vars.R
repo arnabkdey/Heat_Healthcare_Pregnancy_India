@@ -8,7 +8,7 @@
 rm(list = ls())
 pacman::p_load(dplyr, janitor, data.table, fst, openxlsx, here, googledrive)
 library(climExposuR)
-source("paths-mac.R")
+source("paths_mac.R")
 
 # Read datasets -----
 ## Long-term WBGT data ----

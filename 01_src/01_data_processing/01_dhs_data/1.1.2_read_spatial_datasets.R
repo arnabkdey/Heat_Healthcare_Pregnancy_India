@@ -8,7 +8,7 @@
 # Load Packages ----------------------------------------------------------------
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, here)
 pacman::p_load(sf, sp, raster, terra, tidyterra, ncdf4, rnaturalearth)
-source("paths-mac.R")
+source("paths_mac.R")
 # Read Geo Coded Datasets
 ## Step-1: Read geo-coded PSU data from DHS
 ### Load India shape file
@@ -40,9 +40,5 @@ india_boundary_buf <- st_buffer(india_boundary, dist = 50000)
 # plot(st_geometry(india_boundary_buf))
 
 # Save output ----
-## Check if the directory exists and create if not
-path_processed_data <- here(path_project, "processed-data")
-
-## Save the file
-saveRDS(df_dhs_psu_geo, file = here(path_processed_data, "1.2-a-df-dhs-psu-geo.rds"))
-saveRDS(india_boundary_buf, file = here(path_processed_data, "1.2-b-ind-boundary-0-buf.rds"))
+saveRDS(df_dhs_psu_geo, file = here(path_processed, "1.1.2-a-df-dhs-psu-geo.rds"))
+saveRDS(india_boundary_buf, file = here(path_processed, "1.1.2-b-ind-boundary-0-buf.rds"))

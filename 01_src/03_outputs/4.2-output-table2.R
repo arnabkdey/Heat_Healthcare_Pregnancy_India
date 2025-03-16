@@ -9,7 +9,7 @@
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, here)
 library(survey)
-source(here("paths-mac.R"))
+source(here("paths_mac.R"))
 
 # load data ----
 df_paper_final <- readRDS(here(path_project, "processed-data", "2.3-final-hv-data-6mo.rds"))
