@@ -1,6 +1,6 @@
 // Read dataset
-use "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim-papers\heat\heat-and-flw-visits\processed-data\2.3-final-hv-data-6mo.dta"
-cd "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim-papers\heat\heat-and-flw-visits\outputs\models\stata-models"
+use "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim_papers\heat\heat-and-flw-visits\processed-data\2.3-final-hv-data-6mo.dta"
+cd "D:\Arnab\Shared drives\Benmarhnia Lab\Arnab\project-datasets\manuscripts\clim_papers\heat\heat-and-flw-visits\outputs\models\stata-models"
 
 
 // Process variables

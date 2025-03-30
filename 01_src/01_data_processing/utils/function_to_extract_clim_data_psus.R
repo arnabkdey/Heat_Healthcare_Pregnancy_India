@@ -11,7 +11,10 @@
 #' @param dhs_lat_long_sf An sf object containing DHS survey cluster (PSU) locations with coordinates.
 #'                       Default is 'df_dhs_psu_geo_sf'.
 #' @param clim_var Character string naming the climate variable being extracted (used for column naming).
-#'                Default is "tmax_wb" (wet-bulb maximum temperature).
+#'                This parameter is required with no default value.
+#' @param from_index Integer specifying the starting index of files to process. Default is 1.
+#' @param to_index Integer specifying the ending index of files to process. If NULL, all files from from_index
+#'                to the end will be processed. Default is NULL.
 #'
 #' @return A data.table in long format containing:
 #' \describe{
@@ -42,7 +45,7 @@
 #' - Supports various time units (days, hours, minutes, seconds)
 #' - Coordinate reference systems (CRS) should be compatible between region_boundary and input files
 #' - Memory usage can be high when processing multiple large NetCDF files
-#'
+#' - Checks for either 'time' or 'valid_time' variables in NetCDF files
 #'
 #' @importFrom terra rast crop mask extract crs crs<-
 #' @importFrom sf st_as_sf
@@ -55,20 +58,41 @@
 
 merge_dhs_climate <- function(path, region_boundary = india_boundary_buf,
                               dhs_lat_long_sf = df_dhs_psu_geo_sf,
-                              clim_var = "tmax_wb") {
+                              clim_var, from_index = 1, to_index = NULL) {
     require(terra) # Use terra instead of raster
     require(data.table)
     require(sf)
 
+    # Check if clim_var is specified
+    if (missing(clim_var)) {
+        stop("clim_var must be specified")
+    }
+    
     # Get the list of files
-    a <- list.files(path = path, pattern = "\\.nc")
+    file_list <- list.files(path = path, pattern = "\\.nc")
+    
+    # Validate and adjust file index range
+    if (from_index < 1 || from_index > length(file_list)) {
+        stop("from_index is out of range")
+    }
+    
+    if (is.null(to_index)) {
+        to_index <- length(file_list)
+    } else if (to_index < from_index || to_index > length(file_list)) {
+        stop("to_index is out of range or less than from_index")
+    }
+    
+    # Select files within the specified range
+    file_list <- file_list[from_index:to_index]
+    
     # Initialize empty list for data frames
     df_list <- list()
+    
     # Run a loop
-    for (i in seq_along(a)) {
+    for (i in seq_along(file_list)) {
         # Step-1: Read the raster file and crop/mask it to the region boundary
         ## Read the files as raster (SpatRaster in terra)
-        rd0 <- terra::rast(paste0(path, "/", a[i]))
+        rd0 <- terra::rast(paste0(path, "/", file_list[i]))
         ## Restrict the spatial data to the region boundary
         cd1 <- crop(rd0, region_boundary)
         ## Set the crs to the region boundary
@@ -91,14 +115,24 @@ merge_dhs_climate <- function(path, region_boundary = india_boundary_buf,
         df1 <- df1[, geometry := NULL]
         ## Reshape the data frame from wide to long
         df2 <- melt(df1, id.vars = c("psu", "lat", "long", "dist_name"), value.name = clim_var)
-
+        
         # Step-3: Extract dates
         ## Get start and end dates from the nc file
         ### Open the NetCDF file
-        nc_data <- nc_open(paste0(path, "/", a[i]))
+        nc_data <- nc_open(paste0(path, "/", file_list[i]))
+        ### Check for time variable (either 'time' or 'valid_time')
+        if ("time" %in% names(nc_data$dim)) {
+            time_var_name <- "time"
+        } else if ("valid_time" %in% names(nc_data$dim)) {
+            time_var_name <- "valid_time"
+        } else {
+            stop("Neither 'time' nor 'valid_time' variable found in NetCDF file")
+        }
+        
         ### Get the time variable
-        time_var <- ncvar_get(nc_data, "time")
-        time_units <- ncatt_get(nc_data, "time", "units")$value
+        time_var <- ncvar_get(nc_data, time_var_name)
+        time_units <- ncatt_get(nc_data, time_var_name, "units")$value
+        
         ### Extract the reference date from the time units
         ref_date_str <- sub(".*since ", "", time_units)
         ### Determine the time unit (days, hours, etc.)
@@ -119,11 +153,13 @@ merge_dhs_climate <- function(path, region_boundary = india_boundary_buf,
         } else {
             stop("Time units not recognized or supported")
         }
+        
         ### Get the start and end dates
         start_date <- min(actual_dates)
         end_date <- max(actual_dates)
         ### Close the NetCDF file when done
         nc_close(nc_data)
+        
         ## Create a sequence of dates
         dates <- seq(as.Date(start_date), as.Date(end_date), by = "day")
         dates_full <- rep(dates, each = nrow(df1))
@@ -132,8 +168,10 @@ merge_dhs_climate <- function(path, region_boundary = india_boundary_buf,
 
         # Step-4: Add the data frame to the list
         df_list[[i]] <- df2
-        print(paste("finished processing", i))
+        print(paste("finished processing", i, "of", length(file_list), 
+                    "(file", from_index + i - 1, "overall)"))
     }
+    
     df_out <- rbindlist(df_list)
     return(df_out)
 }

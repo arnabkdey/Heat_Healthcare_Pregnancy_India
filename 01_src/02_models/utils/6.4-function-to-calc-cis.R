@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------
+# --------------------
 # @project: Heat and healthcare contact during pregnancy in India
 # @author: Arnab K. Dey,  arnabxdey@gmail.com 
 # @organization: Scripps Institution of Oceanography, UC San Diego
