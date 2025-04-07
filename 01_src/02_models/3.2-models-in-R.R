@@ -10,7 +10,7 @@ pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom
 pacman::p_load(parallel, future, furrr, doParallel, foreach, future.apply)
 # library(scales)
 library(merDeriv)
-source("paths_mac.R")
+source("paths.R")
 
 # Read ----
 df_paper <- readRDS(here(path_project, "processed-data", "2.3-final-hv-data-6mo.rds"))

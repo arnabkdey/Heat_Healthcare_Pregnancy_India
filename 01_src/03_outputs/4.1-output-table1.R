@@ -9,7 +9,7 @@
 rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, here)
 library(survey)
-source("paths_mac.R")
+source("paths.R")
 
 # Load datasets ----
 path_processed <- here(path_project, "processed-data")

@@ -11,7 +11,7 @@ pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom
 pacman::p_load(sf, sp, raster, terra, tidyterra, ncdf4, rnaturalearth)
 
 # set paths ----
-source("paths_mac.R")
+source("paths.R")
 
 # Read Geo Coded Datasets
 ## Step-1: Read geo-coded PSU data from DHS

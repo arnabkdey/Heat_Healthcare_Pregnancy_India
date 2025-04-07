@@ -11,7 +11,7 @@ rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)
 
 # set paths ----
-source("paths_mac.R")
+source("paths.R")
 
 # Step-1: Identify variables for the paper ----
 ## Meta variables

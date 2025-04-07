@@ -3,7 +3,7 @@ rm(list = ls())
 pacman::p_load(tidyverse, janitor, data.table, fst, here, mice)
 
 # set paths ----
-source(here("paths_mac.R"))
+source(here("paths.R"))
 
 # load data ----
 df_IR_long <- read_fst(path = here(path_processed, 

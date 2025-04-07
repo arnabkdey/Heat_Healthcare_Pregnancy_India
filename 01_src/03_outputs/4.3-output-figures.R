@@ -10,7 +10,7 @@ rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, openxlsx, googledrive, here, beepr, Hmisc)
 library(gridExtra)
 library(patchwork)
-source("paths_mac.R")
+source("paths.R")
 
 # Load results ----
 all_models <- openxlsx::read.xlsx(here(path_project, "outputs", "models", "stata-models", "all_models_cleaned.xlsx"))
