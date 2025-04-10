@@ -23,98 +23,110 @@ india_boundary_buf <- readRDS(here(path_processed, "1.1.4.b_ind_boundary_0_buf.r
 # Step-1: Run the function to extract climate data for each PSU ----
 ## Tmax - WBGT ----
 df_psu_tmax_wbgt <- merge_dhs_climate(
-  path = here(path_rmax_wbgt_raw),
-  clim_var = "tmax_wbgt"
+  path = here(path_tmax_wbgt_raw),
+  clim_var = "tmax_wbgt",
+  from_index = 1, to_index = 42
 )
 ### basic cleaning
-colnames(df_psu_tmax_wbgt) <- c("psu", "lat", "long", "dist_name", "variable", "tmax_wbgt", "date")
-df_psu_tmax_wbgt <- df_psu_tmax_wbgt |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu))
+setDT(df_psu_tmax_wbgt)
+df_psu_tmax_wbgt <- df_psu_tmax_wbgt[
+  , .(psu = as.factor(psu), date, tmax_wbgt)][
+    order(psu, date)]
 
-write_fst(df_psu_tmax_wbgt, path = here(path_processed, "1.2.1.a_df_psu_tmax_wbgt.fst"))
+### save the data    
+df_psu_tmax_wbgt |> write_fst(path = here(path_processed, "1.2.1.a_df_psu_tmax_wbgt.fst"))
 rm(df_psu_tmax_wbgt)
 print("finished Step-1a: tmax-wbgt")
 
 ## Tmax - dry bulb -NOAA ----
 df_psu_tmax_db_noaa <- merge_dhs_climate(
   path = here(path_tmax_db_noaa),
-  clim_var = "tmax_db_noaa"
+  clim_var = "tmax_db_noaa",
+  from_index = 1, to_index = 42
 )
 
 ### basic cleaning
-colnames(df_psu_tmax_db_noaa) <- c("psu", "lat", "long", "dist_name", "variable", "tmax_db_noaa", "date")
-df_psu_tmax_db_noaa <- df_psu_tmax_db_noaa |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu))
+setDT(df_psu_tmax_db_noaa)
+df_psu_tmax_db_noaa <- df_psu_tmax_db_noaa[
+  , .(psu = as.factor(psu), date, tmax_db_noaa)][
+    order(psu, date)]
 
-write_fst(df_psu_tmax_db_noaa, path = here(path_processed, "1.2.1.b_df_psu_tmax_db_noaa.fst"))
+#### save the data
+df_psu_tmax_db_noaa |> write_fst(path = here(path_processed, "1.2.1.b_df_psu_tmax_db_noaa.fst"))
 rm(df_psu_tmax_db_noaa)
 print("finished Step-1b: tmax db - noaa")
 
 ## Tmax - dry bulb -ERA5 ----
 df_psu_tmax_db_era5 <- merge_dhs_climate(
   path = here(path_tmax_db_era5),
-  clim_var = "tmax_db_era5"
+  clim_var = "tmax_db_era5",
+  from_index = 1, to_index = 42  
 )
-
 ### basic cleaning
-colnames(df_psu_tmax_db_era5) <- c("psu", "lat", "long", "dist_name", "variable", "tmax_db_era5", "date")
-df_psu_tmax_db_era5 <- df_psu_tmax_db_era5 |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu)) |>
-  mutate(tmax_db_era5 = tmax_db_era5 - 273.15) # convert from Kelvin to Celsius
+setDT(df_psu_tmax_db_era5)
+df_psu_tmax_db_era5 <- df_psu_tmax_db_era5[
+  , .(psu = as.factor(psu), date, tmax_db_era5 = tmax_db_era5 - 273.15)][
+    order(psu, date)]
 
-write_fst(df_psu_tmax_db_era5, path = here(path_processed, "1.2.1.c_df_psu_tmax_db_era5.fst"))
+### save the data
+df_psu_tmax_db_era5 |> write_fst(path = here(path_processed, "1.2.1.c_df_psu_tmax_db_era5.fst"))
 rm(df_psu_tmax_db_era5)
 print("finished Step-1c: tmax db - era5")
 
 ## Tmin - WBGT ----
 df_psu_tmin_wbgt <- merge_dhs_climate(
   path = here(path_tmin_wbgt_raw),
-  clim_var = "tmin_wbgt"
+  clim_var = "tmin_wbgt",
+  from_index = 1, to_index = 42
 )
 
 ### basic cleaning
-colnames(df_psu_tmin_wbgt) <- c("psu", "lat", "long", "dist_name", "variable", "tmin_wbgt", "date")
-df_psu_tmin_wbgt <- df_psu_tmin_wbgt |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu))
+setDT(df_psu_tmin_wbgt)
+df_psu_tmin_wbgt <- df_psu_tmin_wbgt[
+  , .(psu = as.factor(psu), date, tmin_wbgt)][
+    order(psu, date)]
 
-write_fst(df_psu_tmin_wbgt, path = here(path_processed, "1.2.1.d_df_psu_tmin_wbgt.fst"))
+### save the data
+df_psu_tmin_wbgt |> write_fst(path = here(
+  path_processed, 
+  "1.2.1.d_df_psu_tmin_wbgt.fst"))
 rm(df_psu_tmin_wbgt)
 print("finished Step-1d: tmin-wbgt")
 
 ## Tmin - dry bulb ----
 df_psu_tmin_db_noaa <- merge_dhs_climate(
   path = here(path_tmin_db_noaa),
-  clim_var = "tmin_db_noaa"
+  clim_var = "tmin_db_noaa",
+  from_index = 1, to_index = 42
 )
 
 ### basic cleaning
-colnames(df_psu_tmin_db_noaa) <- c("psu", "lat", "long", "dist_name", "variable", "tmin_db_noaa", "date")
-df_psu_tmin_db_noaa <- df_psu_tmin_db_noaa |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu))
+setDT(df_psu_tmin_db_noaa)
+df_psu_tmin_db_noaa <- df_psu_tmin_db_noaa[
+  , .(psu = as.factor(psu), date, tmin_db_noaa)][
+    order(psu, date)]
 
-write_fst(df_psu_tmin_db_noaa, path = here(path_processed, "1.2.1.e_df_psu_tmin_db_noaa.fst"))
+### save the data
+df_psu_tmin_db_noaa |> write_fst(path = here(path_processed, 
+  "1.2.1.e_df_psu_tmin_db_noaa.fst"))
 rm(df_psu_tmin_db_noaa)
 print("finished Step-1e: tmin-db-noaa")
 
-## ## Tmin - dry bulb -ERA5 ----
+## Tmin - dry bulb -ERA5 ----
 df_psu_tmin_db_era5 <- merge_dhs_climate(
   path = here(path_tmin_db_era5),
-  clim_var = "tmin_db_era5"
+  clim_var = "tmin_db_era5",
+  from_index = 1, to_index = 42
 )
 
 ### basic cleaning
-colnames(df_psu_tmin_db_era5) <- c("psu", "lat", "long", "dist_name", "variable", "tmin_db_era5", "date")
-df_psu_tmin_db_era5 <- df_psu_tmin_db_era5 |>
-  arrange(psu, date) |>
-  mutate(psu = as.character(psu)) |>
-  mutate(tmin_db_era5 = tmin_db_era5 - 273.15) # convert from Kelvin to Celsius
+setDT(df_psu_tmin_db_era5)
+df_psu_tmin_db_era5 <- df_psu_tmin_db_era5[
+  , .(psu = as.factor(psu), date, tmin_db_era5 = tmin_db_era5 - 273.15)][
+    order(psu, date)]
 
-write_fst(df_psu_tmin_db_era5, path = here(
+### save the data
+df_psu_tmin_db_era5 |> write_fst(path = here(
   path_processed,
   "1.2.1.f_df_psu_tmin_db_era5.fst"
 ))

@@ -99,16 +99,19 @@ df_IR_tmax_db_era5 <- count_temp_exposure(
 
 toc()
 print("finished tmax_db_era5")
+
 #### save output
 df_IR_tmax_db_era5 |> write.fst(here(path_processed, "1.3.1.c.df_IR_temp_counts_tmax_db_era5.fst"))
 rm(df_tmax_db_era5_lt_2014, df_IR_tmax_db_era5)
 
 ## Tmin ----
 ### WBGT ----
-#### vector of cutoff columns
-vec_cutoff_tmin_wbgt <- dput(df_tmin_wbgt_lt_2014 |> select(starts_with("cutoff")) |> colnames())
 #### load data
 df_tmin_wbgt_lt_2014 <- read_fst(here(path_processed, "1.2.2.d2_df_psu_tmin_wbgt_lt_2014.fst"), as.data.table = TRUE)
+
+#### vector of cutoff columns
+vec_cutoff_tmin_wbgt <- dput(df_tmin_wbgt_lt_2014 |> select(starts_with("cutoff")) |> colnames())
+
 #### Run the function to count days
 tic()
 df_IR_tmin_wbgt <- count_temp_exposure(
@@ -124,15 +127,18 @@ df_IR_tmin_wbgt <- count_temp_exposure(
 toc()
 
 print("finished tmin_wbgt")
+
 #### save output
 df_IR_tmin_wbgt |> write.fst(here(path_processed, "1.3.1.d.df_IR_temp_counts_tmin_wbgt.fst"))
 rm(df_tmin_wbgt_lt_2014, df_IR_tmin_wbgt)
 
 ### Tmin DB - NOAA ----
-#### vector of cutoff columns
-vec_cutoff_tmin_db_noaa <- dput(df_tmin_db_noaa_lt_2014 |> select(starts_with("cutoff")) |> colnames())
 #### load data
 df_tmin_db_noaa_lt_2014 <- read_fst(here(path_processed, "1.2.2.e2_df_psu_tmin_db_noaa_lt_2014.fst"), as.data.table = TRUE)
+
+#### vector of cutoff columns
+vec_cutoff_tmin_db_noaa <- dput(df_tmin_db_noaa_lt_2014 |> select(starts_with("cutoff")) |> colnames())
+
 #### Run the function to count days
 tic()
 df_IR_tmin_db_noaa <- count_temp_exposure(
@@ -154,11 +160,11 @@ df_IR_tmin_db_noaa |> write.fst(here(path_processed, "1.3.1.e.df_IR_temp_counts_
 rm(df_tmin_db_noaa_lt_2014, df_IR_tmin_db_noaa)
 
 ### Tmin DB - ERA5 ----
-#### vector of cutoff columns
-vec_cutoff_tmin_db_era5 <- dput(df_tmin_db_era5_lt_2014 |> select(starts_with("cutoff")) |> colnames())
-
 #### load data
 df_tmin_db_era5_lt_2014 <- read_fst(here(path_processed, "1.2.2.f2_df_psu_tmin_db_era5_lt_2014.fst"), as.data.table = TRUE)
+
+#### vector of cutoff columns
+vec_cutoff_tmin_db_era5 <- dput(df_tmin_db_era5_lt_2014 |> select(starts_with("cutoff")) |> colnames())
 
 #### Run the function to count days
 tic()

@@ -63,9 +63,9 @@ count_temp_exposure <- function(df_health, df_temp,
     DT_temp[, date := as.Date(date)]
   }
   
-  # Ensure PSU columns have the same type in both datasets (convert to character)
-  DT_health[, (psu_col) := as.character(get(psu_col))]
-  DT_temp[, (psu_col) := as.character(get(psu_col))]
+  # Ensure PSU columns have the same type in both datasets (convert to factor)
+  DT_health[, (psu_col) := as.factor(get(psu_col))]
+  DT_temp[, (psu_col) := as.factor(get(psu_col))]
   
   # Create columns for start dates
   DT_health[, start_date := get(date_col) - lookback_days]

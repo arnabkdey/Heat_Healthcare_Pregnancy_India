@@ -11,19 +11,20 @@ source(here("01_src", "01_data_processing", "utils", "func_calc_percentile_cutof
 # dataset paths ----
 ## Tmax 
 ### WBGT
-path_tmax_wbgt <- here(path_processed, "1.2.1.a1_df_psu_tmax_wbgt.fst")
+path_tmax_wbgt <- here(path_processed, "1.2.1.a_df_psu_tmax_wbgt.fst")
 ### NOAA
-path_tmax_db_noaa <- here(path_processed, "1.2.1.b1_df_psu_tmax_db_noaa.fst")
+path_tmax_db_noaa <- here(path_processed, "1.2.1.b_df_psu_tmax_db_noaa.fst")
 ### ERA5
-path_tmax_db_era5 <- here(path_processed, "1.2.1.c1_df_psu_tmax_db_era5.fst")
+path_tmax_db_era5 <- here(path_processed, "1.2.1.c_df_psu_tmax_db_era5.fst")
 
 ## Tmin
 ### WBGT
-path_tmin_wbgt <- here(path_processed, "1.2.1.d1_df_psu_tmin_wbgt.fst")
+path_tmin_wbgt <- here(path_processed, "1.2.1.d_df_psu_tmin_wbgt.fst")
+
 ### NOAA
-path_tmin_db_noaa <- here(path_processed, "1.2.1.e1_df_psu_tmin_db_noaa.fst")
+path_tmin_db_noaa <- here(path_processed, "1.2.1.e_df_psu_tmin_db_noaa.fst")
 ### ERA5
-path_tmin_db_era5 <- here(path_processed, "1.2.1.f1_df_psu_tmin_db_era5.fst")
+path_tmin_db_era5 <- here(path_processed, "1.2.1.f_df_psu_tmin_db_era5.fst")
 
 # define vector cutoffs ----
 vec_cutoffs_tmax <- c(80, 82.5, 85, 87.5, 90, 92.5, 95)

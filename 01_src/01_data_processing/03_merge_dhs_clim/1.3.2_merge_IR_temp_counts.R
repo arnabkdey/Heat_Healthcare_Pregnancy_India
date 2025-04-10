@@ -8,9 +8,11 @@ source(here("paths.R"))
 # load data ----
 ## processed IR data with temp counts 
 df_IR_tmax_wbgt <-  read.fst(here(path_processed, "1.3.1.a.df_IR_temp_counts_tmax_wbgt.fst"))
-df_IR_tmax_db <-  read.fst(here(path_processed, "1.3.1.b.df_IR_temp_counts_tmax_db.fst"))
-df_IR_tmin_wbgt <-  read.fst(here(path_processed, "1.3.1.c.df_IR_temp_counts_tmin_wbgt.fst"))
-df_IR_tmin_db <-  read.fst(here(path_processed, "1.3.1.d.df_IR_temp_counts_tmin_db.fst"))
+df_IR_tmax_db_noaa <-  read.fst(here(path_processed, "1.3.1.b.df_IR_temp_counts_tmax_db_noaa.fst"))
+df_IR_tmax_db_era5 <-  read.fst(here(path_processed, "1.3.1.c.df_IR_temp_counts_tmax_db_era5.fst"))
+df_IR_tmin_wbgt <-  read.fst(here(path_processed, "1.3.1.d.df_IR_temp_counts_tmin_wbgt.fst"))
+df_IR_tmin_db_noaa <-  read.fst(here(path_processed, "1.3.1.e.df_IR_temp_counts_tmin_db_noaa.fst"))
+df_IR_tmin_db_era5 <-  read.fst(here(path_processed, "1.3.1.f.df_IR_temp_counts_tmin_db_era5.fst"))
 
 ## IR data
 df_IR_6mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created.rds"))
@@ -18,14 +20,18 @@ df_IR_6mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created.rds"))
 # Merge IR data with temperature counts data ----
 ### First merge all temperature count datasets based on caseid, psu, doi, and start and end dates columns
 df_temp_counts_merged <- df_IR_tmax_wbgt |>
-  inner_join(df_IR_tmax_db, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
+  inner_join(df_IR_tmax_db_noaa, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
+  inner_join(df_IR_tmax_db_era5, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
   inner_join(df_IR_tmin_wbgt, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
-  inner_join(df_IR_tmin_db, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
+  inner_join(df_IR_tmin_db_noaa, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
+  inner_join(df_IR_tmin_db_era5, by = c("caseid", "psu", "doi", "start_date", "end_date")) |>
   select(-c("start_date", "end_date"))
 
 nrow(df_temp_counts_merged) # 8178
 
 ### filter missing data
+sum(is.na(df_temp_counts_merged$days_cutoff_tmax_wbgt_perc_800_greater)) # 113
+
 df_temp_counts_merged <- df_temp_counts_merged |>
   filter(!is.na(days_cutoff_tmax_wbgt_perc_800_greater))
 

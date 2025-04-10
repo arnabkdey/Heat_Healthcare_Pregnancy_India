@@ -15,9 +15,9 @@
 #' 1. Loads a collection of models from an RDS file
 #' 2. Extracts key coefficients for the exposure variables
 #' 3. Computes odds ratios and 95% confidence intervals
-#' 4. Parses model names to extract metadata (tertile, exposure, threshold, duration)
+#' 4. Parses model names to extract metadata (tertile, exposure, threshold, temp_type)
 #' 5. Checks model convergence
-#' 6. Classifies exposures (wet bulb/dry bulb temperature, threshold types, duration)
+#' 6. Classifies exposures (wet bulb/dry bulb temperature, threshold types, temp_type)
 #' 7. Exports organized results to an Excel file
 #'
 #' The function expects model names to follow a specific format with components separated
@@ -28,8 +28,8 @@
 #' - The function includes extensive error handling and debugging output
 #' - Designed for GEE (Generalized Estimating Equation) models based on the convergence check
 #' - Automatically categorizes exposures by type (wet bulb/dry bulb), threshold (percentile/absolute),
-#'   and duration (1-5 days)
-#' - Results are sorted by tertile, threshold, and duration
+#'   and temp_type (1-5 days)
+#' - Results are sorted by tertile, threshold, and temp_type
 #'
 #' @importFrom tidyverse |> 
 #' @importFrom broom tidy
@@ -181,39 +181,25 @@ process_models_to_excel <- function(input_rds, output_xlsx) {
     mutate(
       exposure_type = case_when(
         grepl("wb", exposure) ~ "Wet Bulb",
-        grepl("db", exposure) ~ "Dry Bulb",
-        TRUE ~ NA_character_
+        grepl("era", exposure) ~ "Dry Bulb - ERA5",
+        TRUE ~ "Dry Bulb - NOAA"
       ),
       threshold = str_extract(exposure, "(?<=_)\\d+"),
-      duration = case_when(
-        grepl("hotday", exposure) ~ "1-day",
-        grepl("_2d", exposure) ~ "2-day",
-        grepl("_3d", exposure) ~ "3-day",
-        grepl("_4d", exposure) ~ "4-day",
-        grepl("_5d", exposure) ~ "5-day",
+      temp_type = case_when(
+        grepl("tmax", exposure) ~ "Tmax",
+        grepl("tmin", exposure) ~ "Tmin",
         TRUE ~ NA_character_
       ),
       threshold_type = case_when(
-        grepl("80", exposure) ~ "Percentile",
-        grepl("825", exposure) ~ "Percentile",
-        grepl("85", exposure) ~ "Percentile",
-        grepl("875", exposure) ~ "Percentile",
-        grepl("90", exposure) ~ "Percentile",
-        grepl("925", exposure) ~ "Percentile",
-        grepl("95", exposure) ~ "Percentile",
-        grepl("97", exposure) ~ "Percentile",
-        grepl("28", exposure) ~ "Absolute",
-        grepl("29", exposure) ~ "Absolute",
-        grepl("30", exposure) ~ "Absolute",
-        grepl("31", exposure) ~ "Absolute",
-        grepl("32", exposure) ~ "Absolute",
+        grepl("perc", exposure) ~ "Percentile",
+        grepl("abs", exposure) ~ "Absolute",
         TRUE ~ NA_character_
       ),
     )
   
   # Arrange results
   results <- results |>
-    arrange(tertile, threshold, duration)
+    arrange(exposure_type, temp_type, threshold_type, threshold)
   
   # Save results to Excel
   write.xlsx(results, output_xlsx)
