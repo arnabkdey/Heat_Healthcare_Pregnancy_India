@@ -151,9 +151,24 @@ df_IR_long_vars <- df_IR_long_vars |>
     TRUE ~ "no"
     ))
 
+### Education ----
+df_IR_long_vars$mat_edu_level_bi <- ifelse(
+  df_IR_long_vars$mat_edu_level == "no education", 
+    "no education", "primary or higher")
+
+### Other variables 
+#### create harmonic month variable
+df_IR_long_vars <- df_IR_long_vars |>
+    mutate(month_int_radians = 2 * pi * as.numeric(month_int) / 12,
+    month_sin1 = sin(month_int_radians),
+    month_cos1 = cos(month_int_radians),
+    month_sin2 = sin(2 * month_int_radians),
+    month_cos2 = cos(2 * month_int_radians))
+
 # Step-5: Select variables ----------------------------------------------------
 df_selected <- df_IR_long_vars |>
-  dplyr::select(caseid, starts_with("meta"), starts_with("dv"), 
+  dplyr::select(caseid, starts_with("meta"), 
+    starts_with("month"), starts_with("dv"), 
     doi, v135, v213, v214, covid, m14_2,
     starts_with("ses"), starts_with("mat"),
     contains("zone"), contains("int"), contains("birth"))
