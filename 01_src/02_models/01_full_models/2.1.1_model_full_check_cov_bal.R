@@ -121,59 +121,63 @@ for (df_idx in 1:length(names(df_effects))) {
         "ses_caste_4_SC" = "Caste: Scheduled Caste",
         "ses_caste_4_ST" = "Caste: Scheduled Tribe",
         "ses_caste_4_OBC" = "Caste: Other Backward Classes",
-        "ses_caste_4_Other" = "Caste: Other",
+        "ses_caste_4_General" = "Caste: Other",
         "ses_religion_4_Hindu" = "Religion: Hindu",
         "ses_religion_4_Muslim" = "Religion: Muslim",
         "ses_religion_4_Christian" = "Religion: Christian",
         "ses_religion_4_Other" = "Religion: Other",
-        "hh_wealth_quintile_ru_og_middle" = "Household wealth: Middle quintile",
-        "hh_wealth_quintile_ru_og_poorer" = "Household wealth: Poorer quintile",
         "hh_wealth_quintile_ru_og_poorest" = "Household wealth: Poorest quintile",
+        "hh_wealth_quintile_ru_og_poorer" = "Household wealth: Poorer quintile",
+        "hh_wealth_quintile_ru_og_middle" = "Household wealth: Middle quintile",
         "hh_wealth_quintile_ru_og_richer" = "Household wealth: Richer quintile",
         "hh_wealth_quintile_ru_og_richest" = "Household wealth: Richest quintile",
         "mat_age_grp_at_int_cat_15-24" = "Mother's age at birth: 15-24 years",
         "mat_age_grp_at_int_cat_25-34" = "Mother's age at birth: 25-34 years",
         "mat_age_grp_at_int_cat_35-49" = "Mother's age at birth: 35-49 years",
-        "mat_edu_level_higher" = "Mother's education: Higher",
         "mat_edu_level_no education" = "Mother's education: No education",
         "mat_edu_level_primary" = "Mother's education: Primary",
         "mat_edu_level_secondary" = "Mother's education: Secondary",
+        "mat_edu_level_higher" = "Mother's education: Higher",
         "mat_media_exp_any_yes" = "Mother exposed to media: Yes",
-        "mat_parity_bi_Primiparous" = "Primiparous",
-        "mat_parity_fac_Multiparous" = "Multiparous",
-        "meta_rural_rural" = "Rural residence"
+        "mat_parity_bi_Primiparous" = "One child",
+        "mat_parity_bi_Multiparous" = "More than one child",
+        "meta_rural_rural" = "Rural residence",
+        "meta_rural_urban" = "Urban residence",
+        "mat_age_at_int_cat_15-24" = "Mother's age at interview: 15-24 years",
+        "mat_age_at_int_cat_25-34" = "Mother's age at interview: 25-34 years",
+        "mat_age_at_int_cat_35-49" = "Mother's age at interview: 35-49 years"
       )
 
       ## Define exposure labels
       exposure_labels <- c(
-        "days_cutoff_tmax_wbgt_perc_800_greater" = "Tmax-WBGT >= 80th percentile",
-        "days_cutoff_tmax_wbgt_perc_825_greater" = "Tmax-WBGT >= 82.5th percentile",
-        "days_cutoff_tmax_wbgt_perc_850_greater" = "Tmax-WBGT >= 85th percentile",
-        "days_cutoff_tmax_wbgt_perc_875_greater" = "Tmax-WBGT >= 87.5th percentile",
-        "days_cutoff_tmax_wbgt_perc_900_greater" = "Tmax-WBGT >= 90th percentile",
-        "days_cutoff_tmax_wbgt_perc_925_greater" = "Tmax-WBGT >= 92.5th percentile",
-        "days_cutoff_tmax_wbgt_perc_950_greater" = "Tmax-WBGT >= 95th percentile",
-        "days_cutoff_tmax_db_era5_perc_800_greater" = "Tmax-DBT >= 80th percentile",
-        "days_cutoff_tmax_db_era5_perc_825_greater" = "Tmax-DBT >= 82.5th percentile",
-        "days_cutoff_tmax_db_era5_perc_850_greater" = "Tmax-DBT >= 85th percentile",
-        "days_cutoff_tmax_db_era5_perc_875_greater" = "Tmax-DBT >= 87.5th percentile",
-        "days_cutoff_tmax_db_era5_perc_900_greater" = "Tmax-DBT >= 90th percentile",
-        "days_cutoff_tmax_db_era5_perc_925_greater" = "Tmax-DBT >= 92.5th percentile",
-        "days_cutoff_tmax_db_era5_perc_950_greater" = "Tmax-DBT >= 95th percentile",
-        "days_cutoff_tmin_wbgt_perc_050_less" = "Tmin-WBGT <= 5th percentile",
-        "days_cutoff_tmin_wbgt_perc_075_less" = "Tmin-WBGT <= 7.5th percentile",
-        "days_cutoff_tmin_wbgt_perc_100_less" = "Tmin-WBGT <= 10th percentile",
-        "days_cutoff_tmin_wbgt_perc_125_less" = "Tmin-WBGT <= 12.5th percentile",
-        "days_cutoff_tmin_wbgt_perc_150_less" = "Tmin-WBGT <= 15th percentile",
-        "days_cutoff_tmin_wbgt_perc_175_less" = "Tmin-WBGT <= 17.5th percentile",
-        "days_cutoff_tmin_wbgt_perc_200_less" = "Tmin-WBGT <= 20th percentile",
-        "days_cutoff_tmin_db_era5_perc_050_less" = "Tmin-DBT <= 5th percentile",
-        "days_cutoff_tmin_db_era5_perc_075_less" = "Tmin-DBT <= 7.5th percentile",
-        "days_cutoff_tmin_db_era5_perc_100_less" = "Tmin-DBT <= 10th percentile",
-        "days_cutoff_tmin_db_era5_perc_125_less" = "Tmin-DBT <= 12.5th percentile",
-        "days_cutoff_tmin_db_era5_perc_150_less" = "Tmin-DBT <= 15th percentile",
-        "days_cutoff_tmin_db_era5_perc_175_less" = "Tmin-DBT <= 17.5th percentile",
-        "days_cutoff_tmin_db_era5_perc_200_less" = "Tmin-DBT <= 20th percentile")
+        "days_cutoff_tmax_wbgt_800_greater" = "Tmax-WBGT >= 80th percentile",
+        "days_cutoff_tmax_wbgt_825_greater" = "Tmax-WBGT >= 82.5th percentile",
+        "days_cutoff_tmax_wbgt_850_greater" = "Tmax-WBGT >= 85th percentile",
+        "days_cutoff_tmax_wbgt_875_greater" = "Tmax-WBGT >= 87.5th percentile",
+        "days_cutoff_tmax_wbgt_900_greater" = "Tmax-WBGT >= 90th percentile",
+        "days_cutoff_tmax_wbgt_925_greater" = "Tmax-WBGT >= 92.5th percentile",
+        "days_cutoff_tmax_wbgt_950_greater" = "Tmax-WBGT >= 95th percentile",
+        "days_cutoff_tmax_db_era5_800_greater" = "Tmax-DBT >= 80th percentile",
+        "days_cutoff_tmax_db_era5_825_greater" = "Tmax-DBT >= 82.5th percentile",
+        "days_cutoff_tmax_db_era5_850_greater" = "Tmax-DBT >= 85th percentile",
+        "days_cutoff_tmax_db_era5_875_greater" = "Tmax-DBT >= 87.5th percentile",
+        "days_cutoff_tmax_db_era5_900_greater" = "Tmax-DBT >= 90th percentile",
+        "days_cutoff_tmax_db_era5_925_greater" = "Tmax-DBT >= 92.5th percentile",
+        "days_cutoff_tmax_db_era5_950_greater" = "Tmax-DBT >= 95th percentile",
+        "days_cutoff_tmin_wbgt_050_less" = "Tmin-WBGT <= 5th percentile",
+        "days_cutoff_tmin_wbgt_075_less" = "Tmin-WBGT <= 7.5th percentile",
+        "days_cutoff_tmin_wbgt_100_less" = "Tmin-WBGT <= 10th percentile",
+        "days_cutoff_tmin_wbgt_125_less" = "Tmin-WBGT <= 12.5th percentile",
+        "days_cutoff_tmin_wbgt_150_less" = "Tmin-WBGT <= 15th percentile",
+        "days_cutoff_tmin_wbgt_175_less" = "Tmin-WBGT <= 17.5th percentile",
+        "days_cutoff_tmin_wbgt_200_less" = "Tmin-WBGT <= 20th percentile",
+        "days_cutoff_tmin_db_era5_050_less" = "Tmin-DBT <= 5th percentile",
+        "days_cutoff_tmin_db_era5_075_less" = "Tmin-DBT <= 7.5th percentile",
+        "days_cutoff_tmin_db_era5_100_less" = "Tmin-DBT <= 10th percentile",
+        "days_cutoff_tmin_db_era5_125_less" = "Tmin-DBT <= 12.5th percentile",
+        "days_cutoff_tmin_db_era5_150_less" = "Tmin-DBT <= 15th percentile",
+        "days_cutoff_tmin_db_era5_175_less" = "Tmin-DBT <= 17.5th percentile",
+        "days_cutoff_tmin_db_era5_200_less" = "Tmin-DBT <= 20th percentile")
 
       ## Create the Love plot
       setDT(df_cur)
@@ -207,8 +211,8 @@ for (df_idx in 1:length(names(df_effects))) {
         )
       
       # Save the plot ----
-      output_path <- here(path_output, "figures", "love_plots", "gbm-trimmed",
-             paste0("love-gbm-", df_name, "-", exposure_var, ".png"))
+      output_path <- here(path_outputs, "figures", "love_plots", "final",
+             paste0("love-", df_name, "-", exposure_var, ".png"))
       
       cat("    - Saving plot to:", basename(output_path), "\n")
       
@@ -240,5 +244,3 @@ cat("Total exposure variables:", total_exposures, "\n")
 cat("Total combinations processed:", processed_combinations, "\n")
 cat("Complete!\n")
 
-#add a beep to signal completion
-try(beepr::beep(sound = 'ping'), silent = TRUE)

@@ -30,14 +30,14 @@ df_temp_counts_merged <- df_IR_tmax_wbgt |>
 nrow(df_temp_counts_merged) # 8178
 
 ### filter missing data
-sum(is.na(df_temp_counts_merged$days_cutoff_tmax_wbgt_perc_800_greater)) # 113
+sum(is.na(df_temp_counts_merged$days_cutoff_tmax_wbgt_800_greater)) # 21
 
 df_temp_counts_merged <- df_temp_counts_merged |>
-  filter(!is.na(days_cutoff_tmax_wbgt_perc_800_greater))
+  filter(!is.na(days_cutoff_tmax_wbgt_800_greater))
 
 sum(is.na(df_temp_counts_merged))
 
-nrow(df_temp_counts_merged) # 8065; 113 cases removed due to missing climate data for those PSU/date combinations
+nrow(df_temp_counts_merged) # 8157; 21 cases removed due to missing climate data for those PSU/date combinations
 
 # Merge IR data with temperature counts data ----
 ### Merge IR data with temperature counts data

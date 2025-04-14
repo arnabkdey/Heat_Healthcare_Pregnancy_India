@@ -1,38 +1,34 @@
+
 # --------------------
 # @project: Heat and healthcare contact during pregnancy in India
-# @author: Arnab K. Dey,  arnabxdey@gmail.com 
+# @author: Arnab K. Dey, Anna Dimitrova
 # @organization: Scripps Institution of Oceanography, UC San Diego
 # @description: This script generates survey-weighted descriptive statistics tables for the study population.
 # @date: Dec 12, 2024
 
 # Libraries ----
 rm(list = ls())
-pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, here)
-library(survey)
-source("paths.R")
+pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, here, survey)
+
+# set paths ----
+source(here("paths.R"))
 
 # Load datasets ----
-path_processed <- here(path_project, "processed-data")
-df_paper_final <- readRDS(here(path_processed, "2.3-final-hv-data-6mo.rds"))
+df_paper_final <- readRDS(here(path_processed, "1.3.2.df_IR_temp_counts_merged.rds"))
 
 # Load function for weighted tables ----
-function_path <- here("1-scripts", "6.2-function-wtd-comparegroups.R")
+function_path <- here("01_src", "03_outputs", "utils", "function_wtd_comparegroups.R")
 source(function_path)
-ls()
 
 # Create list of variables
-varlist_ses <- c("ses_wealth_bi_richer",
+varlist_ses <- c("ses_wealth_bi_richer3",
                   "mat_edu_level",
                   "ses_access_issue_distance", 
                   "meta_rural")
 
-varlist_exp_bin <- c("exp_bin_below_10_10", "exp_bin_10_15_10", "exp_bin_25_30_10", "exp_bin_above_30_10")
-colnames(df_paper_final |> select(starts_with("mat")))
-
 # Convert list of variables to factor -----
 df_paper_final <- df_paper_final |> 
-  mutate(across(all_of(varlist_ses), as.factor)) |> 
-  mutate(across(all_of(varlist_exp_bin), as.factor))  
+  mutate(across(all_of(varlist_ses), as.factor)) 
 
 # Create survey object
 svy_object <- svydesign(ids = ~1,
@@ -50,9 +46,8 @@ table_flw_tot_col <- compareGroups_wtd(data = df_paper_final,
                             n_digits = 1,
                             percentage_type = "column")
 
-tabyl(df_paper_final, mat_age)
 ## Save output
-path_output <- here(path_project, "outputs", "descriptives")
+path_output <- here(path_outputs, "tables")
 openxlsx::write.xlsx(table_flw_tot_col, file = here(path_output, "table1_flw_tot_col.xlsx"))
 
 # Get mean age of mothers

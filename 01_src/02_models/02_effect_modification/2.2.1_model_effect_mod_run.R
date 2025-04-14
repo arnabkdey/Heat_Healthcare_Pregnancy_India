@@ -191,7 +191,7 @@ cat("\n")
 
 # Save the model results list
 saveRDS(model_results_list, here(
-  path_project, "outputs", "models", "effect_modification",
+  path_outputs, "models", "effect_modification",
   "gee_interaction_models.rds"))
 
 cat("\nComplete! All models saved to: outputs/models/effect_modification/gee_interaction_models.rds\n")
