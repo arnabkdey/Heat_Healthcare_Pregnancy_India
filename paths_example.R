@@ -15,10 +15,12 @@ path_dhs_india_2019_shp <- here(root_dir, "dhs-raw-datasets/India/2019-21/geogra
 ## KG Beck Climate zones
 path_beck <- here(root_dir, "climate-datasets/global/climate-region-maps/Beck_KG")
 
-## Temperature and precipitation
-path_tmax_wbgt_raw <- here(root_dir, "climate-datasets/global/wbgt-brimicombe/world-temp-wetbulb-max/")
-path_tmin_wbgt_raw <- here(root_dir, "climate-datasets/global/wbgt-brimicombe/world-temp-wetbulb-min/")
+## Temperature
+path_tmax_wbgt_raw <- here(root_dir, "climate-datasets/global/wbgt-brimicombe/world-temp-wbgt-max/")
+path_tmin_wbgt_raw <- here(root_dir, "climate-datasets/global/wbgt-brimicombe/world-temp-wbgt-min/")
+path_tmean_wbgt_raw <- here(root_dir, "climate-datasets/global/wbgt-brimicombe/world-temp-wbgt-mean/")
 path_tmax_db_noaa <- here(root_dir, "climate-datasets/global/air-temperature-noaa/world-temp-drybulb-max/1979-2023/")
 path_tmin_db_noaa <- here(root_dir, "climate-datasets/global/air-temperature-noaa/world-temp-drybulb-min/1979-2023/")
 path_tmax_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmax/")
 path_tmin_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmin/")
+path_tmean_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmean/")
