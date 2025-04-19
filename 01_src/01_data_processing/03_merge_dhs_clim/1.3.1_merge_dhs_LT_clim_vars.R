@@ -28,7 +28,7 @@ glimpse(df_IR_short)
 ### WBGT ----
 #### Tmax
 df_tmax_wbgt_lt <- fst::read_fst(here(path_processed, "1.2.2.a_df_psu_tmax_wbgt_lt.fst"), 
-  as.data.table = TRUE, from = 1, to = 1000)
+  as.data.table = TRUE)
 colnames(df_tmax_wbgt_lt)
 
 ##### drop columns that are not needed
@@ -261,7 +261,7 @@ df_dhs_tmean_era5_psu <- df_dhs_tmean_era5_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmean_era5_psu) # 8151 
 
 #### save Tmean
-df_dhs_tmean_era5_psu |> write_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_era5_psu.fst"))
+df_dhs_tmean_era5_psu |> write_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_db_era5_psu.fst"))
 rm(df_tmean_era5_lt, df_dhs_tmean_era5_psu)
 print("ERA5 Tmean merged dataset saved.")
 
