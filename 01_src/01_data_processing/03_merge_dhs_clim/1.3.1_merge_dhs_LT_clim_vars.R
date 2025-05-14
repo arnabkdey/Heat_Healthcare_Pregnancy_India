@@ -17,10 +17,12 @@ source(here("01_src", "01_data_processing", "utils",
 
 # load data  ----
 ## DHS data ----
-df_IR_6mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created.rds"))
+df_IR_4mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_4mo.rds"))
+# df_IR_5mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_5mo.rds"))
+# df_IR_6mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_6mo.rds"))
 
 ### create a minimal health dataset
-df_IR_short <- df_IR_6mo |> select(caseid, psu = meta_psu, doi) |>
+df_IR_short <- df_IR_4mo |> select(caseid, psu = meta_psu, doi) |>
   mutate(start_date = doi - 90, end_date = doi)  
 glimpse(df_IR_short)
 
@@ -160,7 +162,7 @@ df_dhs_tmax_wbgt_psu <- df_dhs_tmax_wbgt_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmax_wbgt_psu) # 8151 
 
 #### save Tmax
-df_dhs_tmax_wbgt_psu |> write_fst(here(path_processed, "1.3.1.a_df_dhs_tmax_wbgt_psu.fst"))
+df_dhs_tmax_wbgt_psu |> write_fst(here(path_processed, "1.3.1.a_df_dhs_tmax_wbgt_psu_4mo.fst"))
 rm(df_tmax_wbgt_lt, df_dhs_tmax_wbgt_psu)
 print("WBGT Tmax merged dataset saved.")
 
@@ -180,7 +182,7 @@ df_dhs_tmin_wbgt_psu <- df_dhs_tmin_wbgt_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmin_wbgt_psu) # 8151 
 
 #### save Tmin
-df_dhs_tmin_wbgt_psu |> write_fst(here(path_processed, "1.3.1.b_df_dhs_tmin_wbgt_psu.fst"))
+df_dhs_tmin_wbgt_psu |> write_fst(here(path_processed, "1.3.1.b_df_dhs_tmin_wbgt_psu_4mo.fst"))
 rm(df_tmin_wbgt_lt, df_dhs_tmin_wbgt_psu)
 print("WBGT Tmin merged dataset saved.")
 
@@ -200,7 +202,7 @@ df_dhs_tmean_wbgt_psu <- df_dhs_tmean_wbgt_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmean_wbgt_psu) # 8151 
 
 #### save Tmean
-df_dhs_tmean_wbgt_psu |> write_fst(here(path_processed, "1.3.1.c_df_dhs_tmean_wbgt_psu.fst"))
+df_dhs_tmean_wbgt_psu |> write_fst(here(path_processed, "1.3.1.c_df_dhs_tmean_wbgt_psu_4mo.fst"))
 rm(df_tmean_wbgt_lt, df_dhs_tmean_wbgt_psu)
 print("WBGT Tmean merged dataset saved.")
 
@@ -221,7 +223,7 @@ df_dhs_tmax_era5_psu <- df_dhs_tmax_era5_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmax_era5_psu) # 8151 
 
 #### save Tmax
-df_dhs_tmax_era5_psu |> write_fst(here(path_processed, "1.3.1.d_df_dhs_tmax_db_era5_psu.fst"))
+df_dhs_tmax_era5_psu |> write_fst(here(path_processed, "1.3.1.d_df_dhs_tmax_db_era5_psu_4mo.fst"))
 rm(df_tmax_era5_lt, df_dhs_tmax_era5_psu)
 print("ERA5 Tmax merged dataset saved.")
 
@@ -241,7 +243,7 @@ df_dhs_tmin_era5_psu <- df_dhs_tmin_era5_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmin_era5_psu) # 8151 
 
 #### save Tmin
-df_dhs_tmin_era5_psu |> write_fst(here(path_processed, "1.3.1.e_df_dhs_tmin_db_era5_psu.fst"))
+df_dhs_tmin_era5_psu |> write_fst(here(path_processed, "1.3.1.e_df_dhs_tmin_db_era5_psu_4mo.fst"))
 rm(df_tmin_era5_lt, df_dhs_tmin_era5_psu)
 print("ERA5 Tmin merged dataset saved.")
 
@@ -261,7 +263,7 @@ df_dhs_tmean_era5_psu <- df_dhs_tmean_era5_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmean_era5_psu) # 8151 
 
 #### save Tmean
-df_dhs_tmean_era5_psu |> write_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_db_era5_psu.fst"))
+df_dhs_tmean_era5_psu |> write_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_db_era5_psu_4mo.fst"))
 rm(df_tmean_era5_lt, df_dhs_tmean_era5_psu)
 print("ERA5 Tmean merged dataset saved.")
 
@@ -282,7 +284,7 @@ df_dhs_tmax_noaa_psu <- df_dhs_tmax_noaa_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmax_noaa_psu) # 8151 
 
 #### save Tmax
-df_dhs_tmax_noaa_psu |> write_fst(here(path_processed, "1.3.1.g_df_dhs_tmax_db_noaa_psu.fst"))
+df_dhs_tmax_noaa_psu |> write_fst(here(path_processed, "1.3.1.g_df_dhs_tmax_db_noaa_psu_4mo.fst"))
 rm(df_tmax_noaa_lt, df_dhs_tmax_noaa_psu)
 print("NOAA Tmax merged dataset saved.")
 
@@ -302,6 +304,6 @@ df_dhs_tmin_noaa_psu <- df_dhs_tmin_noaa_psu |> filter(!psu %in% psus_missing)
 nrow(df_dhs_tmin_noaa_psu) # 8151 
 
 #### save Tmin
-df_dhs_tmin_noaa_psu |> write_fst(here(path_processed, "1.3.1.h_df_dhs_tmin_db_noaa_psu.fst"))
+df_dhs_tmin_noaa_psu |> write_fst(here(path_processed, "1.3.1.h_df_dhs_tmin_db_noaa_psu_4mo.fst"))
 rm(df_tmin_noaa_lt, df_dhs_tmin_noaa_psu)
 print("NOAA Tmin merged dataset saved.")

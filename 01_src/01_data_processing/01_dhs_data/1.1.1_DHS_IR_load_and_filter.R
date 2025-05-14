@@ -11,7 +11,7 @@ rm(list = ls())
 pacman::p_load(tidyverse, data.table, janitor, fst, beepr, openxlsx, lme4, broom, broom.mixed, googledrive, here)
 
 # set paths ----
-source("paths.R")
+source(here("paths.R"))
 
 # Step-1: Identify variables for the paper ----
 ## Meta variables
@@ -83,7 +83,8 @@ varlist_pnc_checkup <- c(
 
 ## SES variables
 varlist_ses <- c("v012", "v218", "v201", "v106", "v130", 
-  "s116", "v190", "v191", "v190a", "v191a", "v135")
+  "s116", "v190", "v191", "v190a", "v191a", "v135", 
+  "v714", "v716", "v731", "v732")
 
 ## Access related variables
 varlist_access <- c("v467d", "v123", "v124", "v125")
@@ -178,28 +179,49 @@ tabyl(df_IR_long_full, v213) |> janitor::adorn_totals("row") # currently pregnan
 tabyl(df_IR_long_full, v214) |> janitor::adorn_totals("row") # month of pregnancy
 ls()
 
-## Filter to usual residents who are in their last trimester pregnancy ----
-df_filtered_6mo <- df_IR_long_full |>
-  # Filter to women who are in their last trimester of pregnancy
-  dplyr::filter(v213 == "yes" & v214 >= 6) |> # 11482 cases remaining
-  # Filter to usual residents
-  dplyr::filter(v135 == "usual resident") |> # 18,312 cases dropped; 14116060 cases remaining
-  # Filter post covid cases
-  dplyr::filter(covid == "pre-covid") # 3304 case dropped
+## Filter to usual residents who have completed 4 months of pregnancy ----
+nrow(df_IR_long_full) # 724115
 
-nrow(df_filtered_6mo) # 8,178
-
-## Filter to usual residents who are in their last two months of pregnancy ----
-df_filtered_7mo <- df_IR_long_full |>
-  # Filter to women who are in their last two months of pregnancy
-  dplyr::filter(v213 == "yes" & v214 >= 7) |>
+df_filtered_4mo <- df_IR_long_full |>
+  # Filter to women who have completed 4 months of pregnancy
+  dplyr::filter(v213 == "yes" & v214 >= 4) |>
   # Filter to usual residents
   dplyr::filter(v135 == "usual resident") |> # 18,312 cases dropped; 14116060 cases remaining
   # Filter post covid cases
   dplyr::filter(covid == "pre-covid")
 
-nrow(df_filtered_7mo) # 5,874
+nrow(df_filtered_4mo) # 13,177
+
+
+## Filter to usual residents who are in their last 4 months of pregnancy ----
+nrow(df_IR_long_full) # 724115
+
+df_filtered_5mo <- df_IR_long_full |>
+  # Filter to women who have completed 5 months of pregnancy
+  dplyr::filter(v213 == "yes" & v214 >= 5) |> # 16,205 cases remaining; 707,910 cases dropped
+  # Filter to usual residents
+  dplyr::filter(v135 == "usual resident") |> # 1,219 cases dropped; 14,986 cases remaining
+  # Filter post covid cases
+  dplyr::filter(covid == "pre-covid") # 4,346 cases dropped; 10,640 cases remaining
+
+nrow(df_filtered_5mo) # 10,640
+
+## Filter to usual residents who are in their last trimester pregnancy ----
+nrow(df_IR_long_full) # 724115
+
+df_filtered_6mo <- df_IR_long_full |>
+  # Filter to women who have completed 6 months of pregnancy
+  dplyr::filter(v213 == "yes" & v214 >= 6) |> # 12,489 cases remaining
+  # Filter to usual residents
+  dplyr::filter(v135 == "usual resident") |> # 11,482 cases remaining
+  # Filter post covid cases
+  dplyr::filter(covid == "pre-covid") # 8,178 cases remaining
+
+nrow(df_filtered_6mo) # 8,178
+
 
 # Step-7: Save the files ------------------------------------------------------
+write_fst(df_filtered_4mo, path = here(path_processed, "1.1.1_DHS_IR_filtered_4mo.fst"))
+write_fst(df_filtered_5mo, path = here(path_processed, "1.1.1_DHS_IR_filtered_5mo.fst"))
 write_fst(df_filtered_6mo, path = here(path_processed, "1.1.1_DHS_IR_filtered_6mo.fst"))
-write_fst(df_filtered_7mo, path = here(path_processed, "1.1.1_DHS_IR_filtered_7mo.fst"))
+

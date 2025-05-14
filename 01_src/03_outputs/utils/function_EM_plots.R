@@ -1,91 +1,73 @@
-# Helper functions to generate effect modification plots ----
+#' @title Effect Modification Odds Ratio Plot Generator
+#' @description Creates forest plots for visualizing effect modification through odds ratios
+#' @author Arnab Dey
+#' @date Created: May 2025
+#' @version 1.0
+#' @details
+#' This function generates forest plots for effect modification analysis, displaying odds ratios
+#' with confidence intervals. The plots are formatted for publication quality with specific
+#' styling for medical/scientific journals.
+#' 
+#' @param data A data frame containing the following columns:
+#'   - ModifierLevel: The levels of the effect modifier
+#'   - OR: Odds ratio values
+#'   - OR_LowerCI: Lower confidence interval for odds ratio
+#'   - OR_UpperCI: Upper confidence interval for odds ratio
+#'   - Modifier: The name of the effect modifier
+#' @param modifier The name of the effect modifier variable
+#' 
+#' @return A ggplot object containing the forest plot
+#' 
+#' @examples
+#' # Example usage:
+#' # create_or_plot_em(data = effect_mod_data, modifier = "AgeGroup")
+#' 
+#' @import ggplot2
+#' @import scales
+#' 
+#' @export
 
-## plot for Odds Ratio
-create_or_plot <- function(data, modifier) {
-  ggplot(data, aes(y = ModifierLevel)) +
-    geom_linerange(aes(xmin = OR_LowerCI, xmax = OR_UpperCI, y = ModifierLevel), 
-                   color = "#A11217", size = 1, position = position_dodge(width = 0.7)) +
-    geom_point(aes(x = OR), size = 3.5, color = "#A11217", position = position_dodge(width = 0.7)) +
-    geom_vline(xintercept = 1, color = "black") +
-    facet_wrap(~ Modifier, scales = "free_y", ncol = 2) +
-    labs(title = modifier, y = "", x = "OR with 95% CI") +
-    scale_x_continuous(limits = c(0.90, 1.10), 
-                      breaks = seq(0.90, 1.10, by = 0.05),
-                      expand = c(0, 0)) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(size = 10, face = "bold", hjust = 0),
-      legend.position = "none",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_line(linetype = "dotted", color = "gray", size = 0.4),
-      axis.text.y = element_text(size = 8.5),
-      axis.text.x = element_text(size = 8.5, face = "bold"),
-      axis.title.x = element_text(size = 8.5),
-      axis.title.y = element_text(size = 8.5),
-      strip.text = element_blank(),
-      panel.background = element_rect(fill = "white", color = "white"),
-      plot.background = element_rect(fill = "white", color = "white"),
-      plot.margin = margin(5, 15, 5, 15)
-    )
-}
-
-## plot for RERI
-create_reri_plot <- function(data, modifier) {
-  ggplot(data, aes(y = ModifierLevel)) +
-    geom_segment(aes(x = 0, xend = RERI, y = ModifierLevel, yend = ModifierLevel), 
-                 size = 5, color = "#6FAEF5", position = position_dodge(width = 0.7)) +
-    geom_linerange(aes(xmin = RERI_LowerCI, xmax = RERI_UpperCI, y = ModifierLevel), 
-                   color = "#102A6B", size = 1.2, position = position_dodge(width = 0.7)) +
-    geom_vline(xintercept = 0, color = "black") +
-    facet_wrap(~ Modifier, scales = "free_y", ncol = 2) +
-    labs(y = "", x = "RERI with 95% CI") +
-    scale_x_continuous(limits = c(-0.06, 0.06), 
-                      breaks = seq(-0.06, 0.06, by = 0.02),
-                      expand = c(0, 0)) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
-      legend.position = "none",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_line(linetype = "dotted", color = "gray", size = 0.4),
-      axis.text.y = element_text(size = 8.5),
-      axis.text.x = element_text(size = 8.5, face = "bold"),
-      axis.title.x = element_text(size = 8.5),
-      axis.title.y = element_text(size = 8.5),
-      strip.text = element_blank(),
-      panel.background = element_rect(fill = "white", color = "white"),
-      plot.background = element_rect(fill = "white", color = "white"),
-      plot.margin = margin(5, 15, 5, 15)
-    )
-}
-
-## Combine OR and RERI plots
-create_modifier_plots <- function(or_data, reri_data, modifiers) {
-  final_plots <- list()
-  
-  for (modifier in modifiers) {
-    # Filter datasets
-    or_filtered <- or_data |> filter(Modifier == modifier)
-    reri_filtered <- reri_data |> filter(Modifier == modifier)
-    
-    # Generate OR and RERI plots
-    ggplot_or <- create_or_plot(or_filtered, modifier)
-    ggplot_reri <- create_reri_plot(reri_filtered, modifier)
-    
-    # Combine OR and RERI plots
-    final_plot <- plot_grid(
-      ggplot_or,
-      ggplot_reri,
-      ncol = 1, 
-      align = "v", 
-      rel_heights = c(1, 0.7)
-    )
-    
-    # Store in list
-    final_plots[[modifier]] <- final_plot
+## plot for Effect modification: Odds Ratio
+create_or_plot_em <- function(data, modifier) {
+  # Check if we have data for this modifier
+  if(nrow(data) == 0) {
+    return(NULL)
   }
   
-  return(final_plots)
+  # Calculate x-axis range with padding (log scale)
+  x_range <- range(c(data$OR_LowerCI, data$OR_UpperCI), na.rm = TRUE)
+  x_range <- c(min(x_range) * 0.8, max(x_range) * 1.2)
+
+  ggplot(data, aes(y = ModifierLevel)) +
+    geom_vline(xintercept = 1, colour = "gray50", linetype = "dashed", linewidth = 0.5) +
+    geom_pointrange(aes(x = OR, xmin = OR_LowerCI, xmax = OR_UpperCI), color = "#A11217", size = 1, fatten = 2.5, alpha = 0.8) +
+    geom_point(aes(x = OR), size = 3.5, color = "#A11217") +
+    geom_text(aes(x = OR, label = sprintf("%.2f", OR)), vjust = -1.2, hjust = 0.5, size = 3.5, family = "Times New Roman") +
+    facet_wrap(~ Modifier, scales = "free_y", ncol = 2, strip.position = "top") +
+    labs(y = NULL, x = "Odds Ratio [95% CI]") +
+    scale_x_log10(
+      breaks = scales::breaks_log(n = 8),
+      labels = scales::label_number(accuracy = 0.01),
+      limits = x_range
+    ) +
+    theme_classic(base_size = 14, base_family = "Times New Roman") +
+    theme(
+      panel.grid.major = element_line(linewidth=0.25),
+      panel.grid.minor.x = element_line(linewidth=0.15),
+      strip.background = element_blank(),
+      strip.placement = "outside",
+      strip.text = element_text(face = "bold", size = 13, family = "Times New Roman"),
+      axis.ticks = element_blank(),
+      axis.title.x = element_text(margin = margin(t = 15)),
+      axis.title.y = element_text(margin = margin(r = 15)),
+      panel.border = element_blank(),
+      legend.position = "none",
+      panel.spacing = unit(0.7, "cm"),
+      plot.title = element_blank(),
+      axis.text.y = element_text(size = 11, family = "Times New Roman"),
+      axis.text.x = element_text(size = 11, face = "bold", family = "Times New Roman"),
+      plot.background = element_rect(fill = "white", color = "white"),
+      panel.background = element_rect(fill = "white", color = "white"),
+      plot.margin = margin(10, 20, 10, 20)
+    )
 }

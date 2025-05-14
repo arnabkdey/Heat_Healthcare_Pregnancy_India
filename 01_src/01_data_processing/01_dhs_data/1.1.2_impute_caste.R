@@ -1,5 +1,4 @@
 # load libraries ----
-rm(list = ls())
 pacman::p_load(tidyverse, janitor, data.table, fst, here, mice)
 
 # set paths ----
@@ -7,7 +6,7 @@ source(here("paths.R"))
 
 # load data ----
 df_IR_long <- read_fst(path = here(path_processed, 
-  "1.1.1_DHS_IR_filtered_6mo.fst"))
+  "1.1.1_DHS_IR_filtered_4mo.fst"))
 nrow(df_IR_long)
 length(unique(df_IR_long$caseid))
 
@@ -54,4 +53,5 @@ df_IR_long |>
 
 # save the imputed dataset
 df_IR_long_imputed |> saveRDS(here(path_processed, 
-  "1.1.2_DHS_IR_imputed_6mo.rds"))
+  "1.1.2_DHS_IR_imputed_4mo.rds"))
+

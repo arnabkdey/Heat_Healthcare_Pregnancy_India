@@ -38,3 +38,13 @@ paths.R
 # Other folders
 archives/
 sandbox/
+results/
+
+# Output files
+*.xlsx
+*.csv
+*.rds
+*.fst
+*.png
+*.pdf
+*.html

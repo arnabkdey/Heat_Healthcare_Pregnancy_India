@@ -8,11 +8,12 @@ source(here("paths.R"))
 # load data ----
 ## full data with missing caste values
 df_IR_missing <- read_fst(here(path_processed,
-  "1.1.1_DHS_IR_filtered_6mo.fst")) |>
+  "1.1.1_DHS_IR_filtered_4mo.fst")) |>
   select(-hh_caste)
+
 ## imputed caste data
 df_IR_impute <- readRDS(here(path_processed, 
-  "1.1.2_DHS_IR_imputed_6mo.rds")) |>
+  "1.1.2_DHS_IR_imputed_5mo.rds")) |>
   select(caseid, hh_caste)
 
 # merge the datasets ----
@@ -25,7 +26,34 @@ df_IR_long_merged <- df_IR_missing |>
 df_IR_long_vars <- df_IR_long_merged |> 
   dplyr::mutate(dv_no_contact_3mo = ifelse(s359 == "yes" | s361 == "yes" | s368 == "yes", 0, 1))
 
-tabyl(df_IR_long_vars, dv_no_contact_3mo) |> janitor::adorn_totals("row")
+### Number of contacts with healthcare workers in last 3 months
+### function to clean the data
+clean_contact_data <- function(data, varlist) {
+  ## cpnvert "none" to 0 and "dont know" to NA 
+  data <- data |>
+    dplyr::mutate(across(all_of(varlist), ~ ifelse(. == "none", 0, 
+      ifelse(. == "dont know", NA, as.numeric(.))))) |>
+    ## add a suffix of _temp to the variable names
+    dplyr::rename_with(~ paste0(., "_temp"), all_of(varlist))
+  ## convert to numeric
+  data <- data |>
+    dplyr::mutate(across(all_of(paste0(varlist, "_temp")), as.numeric))
+  return(data)
+}
+
+### list of variables to clean
+varlist_contacts <- c("s360a", "s360b", "s360c", "s360d", "s363a", "s363b", "s363c", "s363d")
+### clean the data
+df_IR_long_vars <- clean_contact_data(df_IR_long_vars, varlist_contacts)
+
+### create a new variable for the number of contacts
+df_IR_long_vars <- df_IR_long_vars |>
+  # create a new variable for the number of contacts
+  dplyr::mutate(dv_num_contact_3mo = 
+    rowSums(across(s360a_temp:s360d_temp), na.rm = TRUE) + 
+    rowSums(across(s363a_temp:s363d_temp), na.rm = TRUE)) |>
+  # cap number of contacts to 20
+  dplyr::mutate(dv_num_contact_3mo = pmin(dv_num_contact_3mo, 20))
 
 ## SES Variables ----
 ### Wealth - Binary
@@ -45,6 +73,13 @@ df_IR_long_vars <- df_IR_long_vars |>
     hh_wealth_quintile_ru_og == "middle", "richer3", "poorer")) |>
   # relevel the factor
   dplyr::mutate(ses_wealth_bi_richer3 = forcats::fct_relevel(ses_wealth_bi_richer3, "richer3", "poorer")) 
+
+### Occupation
+tabyl(df_IR_long_vars, v714) |> janitor::adorn_totals("row")
+
+df_IR_long_vars <- df_IR_long_vars |>
+  dplyr::mutate(ses_occupation_bi = ifelse(v716 == "not working and didn't work in last 12 months", "not-working", "working")) 
+
 
 ### Religion
 df_IR_long_vars <- df_IR_long_vars |>
@@ -165,6 +200,43 @@ df_IR_long_vars <- df_IR_long_vars |>
     month_sin2 = sin(2 * month_int_radians),
     month_cos2 = cos(2 * month_int_radians))
 
+#### Create administrative zones
+unique(df_IR_long_vars$meta_state_name)
+
+# Create a copy first if needed
+df_IR_long_vars$meta_zonal_council <- NA
+
+# Assign zonal councils based on meta_state_name
+df_IR_long_vars$meta_zonal_council <- case_when(
+  # Northern Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("haryana", "himachal pradesh", "jammu & kashmir", 
+                                         "punjab", "rajasthan", "nct of delhi", "ladakh") ~ "Northern Zonal Council",
+  
+  # Central Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("chhattisgarh", "uttarakhand", "uttar pradesh", 
+                                         "madhya pradesh") ~ "Central Zonal Council",
+  
+  # Eastern Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("bihar", "jharkhand", "odisha", "west bengal") ~ "Eastern Zonal Council",
+  
+  # Western Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("goa", "gujarat", "dadra & nagar haveli and daman & diu", 
+                                         "maharashtra") ~ "Western Zonal Council",
+  
+  # Southern Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("andhra pradesh", "karnataka", "kerala", "tamil nadu", 
+                                         "puducherry", "telangana") ~ "Southern Zonal Council",
+  
+  # North Eastern Zonal Council
+  df_IR_long_vars$meta_state_name %in% c("assam", "arunachal pradesh", "manipur", "tripura", 
+                                         "mizoram", "meghalaya", "nagaland", "sikkim") ~ "North Eastern Zonal Council",
+  
+  # Special handling: Union Territories not clearly under zonal councils, 
+  df_IR_long_vars$meta_state_name %in% c("lakshadweep", "andaman & nicobar islands") ~ "Lakshadweep & Andaman & Nicobar Islands",
+  
+  TRUE ~ "Other/Unknown"
+)
+
 # Step-5: Select variables ----------------------------------------------------
 df_selected <- df_IR_long_vars |>
   dplyr::select(caseid, starts_with("meta"), 
@@ -174,4 +246,4 @@ df_selected <- df_IR_long_vars |>
     contains("zone"), contains("int"), contains("birth"))
 
 # save the dataset
-df_selected |> saveRDS(here(path_processed, "1.1.3_DHS_IR_vars_created.rds"))
+df_selected |> saveRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_4mo.rds"))

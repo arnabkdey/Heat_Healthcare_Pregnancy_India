@@ -22,13 +22,14 @@ print("Counting days in bins for Tmax WBGT...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmax_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.a_df_dhs_tmax_wbgt_psu.fst"), 
+df_dhs_tmax_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.a_df_dhs_tmax_wbgt_psu_4mo.fst"), 
   as.data.table = TRUE)
+glimpse(df_dhs_tmax_wbgt_psu)
 
 #### load daily tmax_wbgt data
 df_tmax_wbgt_daily <- fst::read_fst(here(path_processed, "1.2.1.a_df_psu_tmax_wbgt.fst"), 
   as.data.table = TRUE)
-
+glimpse(df_tmax_wbgt_daily)
 #### Filter to 2014 onwards
 df_tmax_wbgt_daily <- df_tmax_wbgt_daily |> filter(date >= as.Date("2014-01-01"))
 
@@ -42,7 +43,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmax_wbgt |> fst::write_fst(here("outputs", "1.3.2.a_df_bins_tmax_wbgt.fst"))
+result_tmax_wbgt |> fst::write_fst(here(path_processed, "1.3.2.a_df_bins_tmax_wbgt_4mo.fst"))
 rm(result_tmax_wbgt, df_tmax_wbgt_daily, df_dhs_tmax_wbgt_psu)
 print("Tmax WBGT bins saved.")
 
@@ -50,8 +51,8 @@ print("Tmax WBGT bins saved.")
 print("Counting days in bins for Tmin WBGT...")
 tic()
 
-#### load DHS data with PSU level cutoffs
-df_dhs_tmin_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.b_df_dhs_tmin_wbgt_psu.fst"), 
+#### load DHS data with PSU level cutoffs 
+df_dhs_tmin_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.b_df_dhs_tmin_wbgt_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmin_wbgt data
@@ -71,7 +72,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmin_wbgt |> fst::write_fst(here("outputs", "1.3.2.b_df_bins_tmin_wbgt.fst"))
+result_tmin_wbgt |> fst::write_fst(here(path_processed, "1.3.2.b_df_bins_tmin_wbgt_4mo.fst"))
 rm(result_tmin_wbgt, df_tmin_wbgt_daily, df_dhs_tmin_wbgt_psu)
 print("Tmin WBGT bins saved.")
 
@@ -80,7 +81,7 @@ print("Counting days in bins for Tmean WBGT...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmean_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.c_df_dhs_tmean_wbgt_psu.fst"), 
+df_dhs_tmean_wbgt_psu <- fst::read_fst(here(path_processed, "1.3.1.c_df_dhs_tmean_wbgt_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmean_wbgt data
@@ -100,7 +101,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmean_wbgt |> fst::write_fst(here("outputs", "1.3.2.c_df_bins_tmean_wbgt.fst"))
+result_tmean_wbgt |> fst::write_fst(here(path_processed, "1.3.2.c_df_bins_tmean_wbgt_4mo.fst"))
 rm(result_tmean_wbgt, df_tmean_wbgt_daily, df_dhs_tmean_wbgt_psu)
 print("Tmean WBGT bins saved.")
 
@@ -110,7 +111,7 @@ print("Counting days in bins for Tmax ERA5...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmax_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.d_df_dhs_tmax_db_era5_psu.fst"), 
+df_dhs_tmax_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.d_df_dhs_tmax_db_era5_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmax_era5 data
@@ -130,7 +131,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmax_era5 |> fst::write_fst(here("outputs", "1.3.2.d_df_bins_tmax_db_era5.fst"))
+result_tmax_era5 |> fst::write_fst(here(path_processed, "1.3.2.d_df_bins_tmax_db_era5_4mo.fst"))
 rm(result_tmax_era5, df_tmax_era5_daily, df_dhs_tmax_era5_psu)
 print("Tmax ERA5 bins saved.")
 
@@ -139,7 +140,7 @@ print("Counting days in bins for Tmin ERA5...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmin_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.e_df_dhs_tmin_db_era5_psu.fst"), 
+df_dhs_tmin_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.e_df_dhs_tmin_db_era5_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmin_era5 data
@@ -159,7 +160,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmin_era5 |> fst::write_fst(here("outputs", "1.3.2.e_df_bins_tmin_db_era5.fst"))
+result_tmin_era5 |> fst::write_fst(here(path_processed, "1.3.2.e_df_bins_tmin_db_era5_4mo.fst"))
 rm(result_tmin_era5, df_tmin_era5_daily, df_dhs_tmin_era5_psu)
 print("Tmin ERA5 bins saved.")
 
@@ -168,7 +169,7 @@ print("Counting days in bins for Tmean ERA5...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmean_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_db_era5_psu.fst"), 
+df_dhs_tmean_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.f_df_dhs_tmean_db_era5_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmean_era5 data
@@ -188,7 +189,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmean_era5 |> fst::write_fst(here("outputs", "1.3.2.f_df_bins_tmean_db_era5.fst"))
+result_tmean_era5 |> fst::write_fst(here(path_processed, "1.3.2.f_df_bins_tmean_db_era5_4mo.fst"))
 rm(result_tmean_era5, df_tmean_era5_daily, df_dhs_tmean_era5_psu)
 print("Tmean ERA5 bins saved.")
 
@@ -198,7 +199,7 @@ print("Counting days in bins for Tmax NOAA...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmax_noaa_psu <- fst::read_fst(here(path_processed, "1.3.1.g_df_dhs_tmax_db_noaa_psu.fst"), 
+df_dhs_tmax_noaa_psu <- fst::read_fst(here(path_processed, "1.3.1.g_df_dhs_tmax_db_noaa_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmax_noaa data
@@ -218,7 +219,7 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmax_noaa |> fst::write_fst(here("outputs", "1.3.2.g_df_bins_tmax_db_noaa.fst"))
+result_tmax_noaa |> fst::write_fst(here(path_processed, "1.3.2.g_df_bins_tmax_db_noaa_4mo.fst"))
 rm(result_tmax_noaa, df_tmax_noaa_daily, df_dhs_tmax_noaa_psu)
 print("Tmax NOAA bins saved.")
 
@@ -227,7 +228,7 @@ print("Counting days in bins for Tmin NOAA...")
 tic()
 
 #### load DHS data with PSU level cutoffs
-df_dhs_tmin_noaa_psu <- fst::read_fst(here(path_processed, "1.3.1.h_df_dhs_tmin_db_noaa_psu.fst"), 
+df_dhs_tmin_noaa_psu <- fst::read_fst(here(path_processed, "1.3.1.h_df_dhs_tmin_db_noaa_psu_4mo.fst"), 
   as.data.table = TRUE)
 
 #### load daily tmin_noaa data
@@ -247,6 +248,6 @@ toc()
 print(Sys.time())
 
 #### save the result
-result_tmin_noaa |> fst::write_fst(here("outputs", "1.3.2.h_df_bins_tmin_db_noaa.fst"))
+result_tmin_noaa |> fst::write_fst(here(path_processed, "1.3.2.h_df_bins_tmin_db_noaa_4mo.fst"))
 rm(result_tmin_noaa, df_tmin_noaa_daily, df_dhs_tmin_noaa_psu)
 print("Tmin NOAA bins saved.")
