@@ -23,10 +23,10 @@ df_IR_4mo <- df_IR_4mo |> mutate(psu = meta_psu)
 temp_files <- list(
   tmax_wbgt = "1.3.2.a_df_bins_tmax_wbgt_4mo.fst",
   tmin_wbgt = "1.3.2.b_df_bins_tmin_wbgt_4mo.fst",
-  # tmean_wbgt = "1.3.2.c_df_bins_tmean_wbgt_4mo.fst",
   tmax_db_era5 = "1.3.2.d_df_bins_tmax_db_era5_4mo.fst",
-  tmin_db_era5 = "1.3.2.e_df_bins_tmin_db_era5_4mo.fst"
-  # tmean_db_era5 = "1.3.2.f_df_bins_tmean_db_era5_4mo.fst"
+  tmin_db_era5 = "1.3.2.e_df_bins_tmin_db_era5_4mo.fst",
+  tmax_hi_era5 = "1.3.2.i_df_bins_tmax_hi_era5_4mo.fst",
+  tmin_hi_era5 = "1.3.2.j_df_bins_tmin_hi_era5_4mo.fst"
 )
 
 # Merge datasets

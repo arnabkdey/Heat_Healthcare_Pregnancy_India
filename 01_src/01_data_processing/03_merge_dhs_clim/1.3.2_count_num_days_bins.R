@@ -5,17 +5,17 @@
 # @description: This script counts the number of days in temperature bins for each PSU.
 # @date: Apr, 2025
 
-rm(list = ls())
+# Load libraries ----
 pacman::p_load(dplyr, janitor, data.table, fst, here, tictoc)
 
-# set paths ----
+# Set paths ----
 source("paths.R")
 
-# source functions ----
+# Source functions ----
 source(here("01_src", "01_data_processing", "utils", 
   "func_count_num_days_bins.R"))
 
-# count number of days in bins ----
+# Count number of days in bins ----
 ## WBGT ----
 ### Tmax
 print("Counting days in bins for Tmax WBGT...")
@@ -105,7 +105,7 @@ result_tmean_wbgt |> fst::write_fst(here(path_processed, "1.3.2.c_df_bins_tmean_
 rm(result_tmean_wbgt, df_tmean_wbgt_daily, df_dhs_tmean_wbgt_psu)
 print("Tmean WBGT bins saved.")
 
-## ERA5 ----
+## Dry BulbERA5 ----
 ### Tmax
 print("Counting days in bins for Tmax ERA5...")
 tic()
@@ -251,3 +251,67 @@ print(Sys.time())
 result_tmin_noaa |> fst::write_fst(here(path_processed, "1.3.2.h_df_bins_tmin_db_noaa_4mo.fst"))
 rm(result_tmin_noaa, df_tmin_noaa_daily, df_dhs_tmin_noaa_psu)
 print("Tmin NOAA bins saved.")
+
+## Heat Index - ERA5 ----
+### Tmax
+print("Counting days in bins for Tmax HI ERA5...")
+tic()
+
+#### load DHS data with PSU level cutoffs
+df_dhs_tmax_hi_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.i_df_dhs_tmax_hi_era5_psu_4mo.fst"), 
+  as.data.table = TRUE)
+
+#### load daily tmax_hi_era5 data
+df_tmax_hi_era5_daily <- fst::read_fst(here(path_processed, "1.2.1.a.1_df_psu_tmax_hi_era5.fst"),  
+  as.data.table = TRUE,
+  columns = c("date", "psu", "tmax_hi_era5"))
+
+#### Filter to 2014 onwards
+df_tmax_hi_era5_daily <- df_tmax_hi_era5_daily |> filter(date >= as.Date("2014-01-01"))
+
+#### count number of days in bins
+result_tmax_hi_era5 <- count_days_in_bins(
+  df_dhs = df_dhs_tmax_hi_era5_psu,
+  df_daily = df_tmax_hi_era5_daily,
+  temp_var = "tmax_hi_era5"
+)
+toc()
+print(Sys.time())
+
+#### save the result
+result_tmax_hi_era5 |> fst::write_fst(here(path_processed, "1.3.2.i_df_bins_tmax_hi_era5_4mo.fst"))
+rm(result_tmax_hi_era5, df_tmax_hi_era5_daily, df_dhs_tmax_hi_era5_psu)
+print("Tmax HI ERA5 bins saved.")
+
+### Tmin
+print("Counting days in bins for Tmin HI ERA5...")
+tic()
+
+#### load DHS data with PSU level cutoffs
+df_dhs_tmin_hi_era5_psu <- fst::read_fst(here(path_processed, "1.3.1.j_df_dhs_tmin_hi_era5_psu_4mo.fst"), 
+  as.data.table = TRUE)
+
+#### load daily tmin_hi_era5 data
+df_tmin_hi_era5_daily <- fst::read_fst(here(path_processed, "1.2.1.a.2_df_psu_tmin_hi_era5.fst"),  
+  as.data.table = TRUE,
+  columns = c("date", "psu", "tmin_hi_era5"))
+
+#### Filter to 2014 onwards
+df_tmin_hi_era5_daily <- df_tmin_hi_era5_daily |> filter(date >= as.Date("2014-01-01"))
+
+#### count number of days in bins
+result_tmin_hi_era5 <- count_days_in_bins(
+  df_dhs = df_dhs_tmin_hi_era5_psu,
+  df_daily = df_tmin_hi_era5_daily,
+  temp_var = "tmin_hi_era5"
+)
+toc()
+print(Sys.time())
+
+#### save the result
+result_tmin_hi_era5 |> fst::write_fst(here(path_processed, "1.3.2.j_df_bins_tmin_hi_era5_4mo.fst"))
+rm(result_tmin_hi_era5, df_tmin_hi_era5_daily, df_dhs_tmin_hi_era5_psu)
+print("Tmin HI ERA5 bins saved.")
+
+
+
