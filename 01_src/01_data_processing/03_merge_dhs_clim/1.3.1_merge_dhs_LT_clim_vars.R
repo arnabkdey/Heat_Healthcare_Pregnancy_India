@@ -5,17 +5,17 @@
 # @description: This script creates variables to count number of days in percentile bins of daily temperature data.
 # @date: Apr, 2025
 
-rm(list = ls())
+# Load libraries ----
 pacman::p_load(dplyr, janitor, data.table, fst, here, tictoc)
 
-# set paths ----
+# Set paths ----
 source("paths.R")
 
-# source functions ----
+# Source functions ----
 source(here("01_src", "01_data_processing", "utils", 
   "func_count_num_days_bins.R"))
 
-# load data  ----
+# Load data  ----
 ## DHS data ----
 df_IR_4mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_4mo.rds"))
 # df_IR_5mo <- readRDS(here(path_processed, "1.1.3_DHS_IR_vars_created_5mo.rds"))
@@ -143,7 +143,39 @@ df_tmin_noaa_lt |> filter(is.na(cutoff_tmin_db_noaa_100)) |> pull(psu) |> unique
 df_tmin_noaa_lt <- df_tmin_noaa_lt |> filter(!is.na(cutoff_tmin_db_noaa_100)) 
 sum(is.na(df_tmin_noaa_lt))
 
-# merge dhs and clim data ----
+### Heat Index - ERA5 ----
+#### Tmax
+df_tmax_hi_era5_lt <- fst::read_fst(here(path_processed, "1.2.2.i_df_psu_tmax_hi_era5_lt.fst"), 
+  as.data.table = TRUE)
+
+##### drop columns that are not needed
+df_tmax_hi_era5_lt <- df_tmax_hi_era5_lt |> 
+  select(-starts_with("days")) |>
+  select(-contains("dew_era5")) |>
+  select(-contains("db_era5"))
+
+##### identify psus with missing data
+df_tmax_hi_era5_lt |> filter(is.na(cutoff_tmax_hi_era5_100)) |> pull(psu) |> unique()
+
+##### drop psus with missing data
+df_tmax_hi_era5_lt <- df_tmax_hi_era5_lt |> filter(!is.na(cutoff_tmax_hi_era5_100)) 
+sum(is.na(df_tmax_hi_era5_lt))
+
+#### Tmin
+df_tmin_hi_era5_lt <- fst::read_fst(here(path_processed, "1.2.2.j_df_psu_tmin_hi_era5_lt.fst"), 
+  as.data.table = TRUE)
+
+##### drop columns that are not needed
+df_tmin_hi_era5_lt <- df_tmin_hi_era5_lt |> select(-starts_with("days"))
+
+##### identify psus with missing data
+df_tmin_hi_era5_lt |> filter(is.na(cutoff_tmin_hi_era5_100)) |> pull(psu) |> unique()
+
+##### drop psus with missing data
+df_tmin_hi_era5_lt <- df_tmin_hi_era5_lt |> filter(!is.na(cutoff_tmin_hi_era5_100)) 
+sum(is.na(df_tmin_hi_era5_lt))
+
+# Merge DHS and clim data ----
 ## WBGT ----
 ### Tmax
 df_dhs_tmax_wbgt_psu <- left_join(df_IR_short, df_tmax_wbgt_lt, by = c("psu"))
@@ -307,3 +339,46 @@ nrow(df_dhs_tmin_noaa_psu) # 8151
 df_dhs_tmin_noaa_psu |> write_fst(here(path_processed, "1.3.1.h_df_dhs_tmin_db_noaa_psu_4mo.fst"))
 rm(df_tmin_noaa_lt, df_dhs_tmin_noaa_psu)
 print("NOAA Tmin merged dataset saved.")
+
+
+## Heat Index - ERA5 ----
+### Tmax
+df_dhs_tmax_hi_era5_psu <- left_join(df_IR_short, df_tmax_hi_era5_lt, by = c("psu"))
+nrow(df_IR_short) # 8178
+nrow(df_dhs_tmax_hi_era5_psu) # 8178
+
+#### identify psus with missing data
+psus_missing <- df_dhs_tmax_hi_era5_psu |> filter(is.na(cutoff_tmax_hi_era5_100)) |> pull(psu) |> unique()
+
+#### check if the psus with missing data are also missing in the tmax_hi_era5_lt data
+df_tmax_hi_era5_lt |> filter(psu %in% psus_missing)
+
+#### drop the psus with missing data
+df_dhs_tmax_hi_era5_psu <- df_dhs_tmax_hi_era5_psu |> filter(!psu %in% psus_missing)
+nrow(df_dhs_tmax_hi_era5_psu) # 8151 
+
+#### save Tmax
+df_dhs_tmax_hi_era5_psu |> write_fst(here(path_processed, "1.3.1.i_df_dhs_tmax_hi_era5_psu_4mo.fst"))
+rm(df_tmax_hi_era5_lt, df_dhs_tmax_hi_era5_psu)
+print("ERA5 Tmax HI merged dataset saved.")
+
+### Tmin
+df_dhs_tmin_hi_era5_psu <- left_join(df_IR_short, df_tmin_hi_era5_lt, by = c("psu"))
+nrow(df_IR_short) # 8178
+nrow(df_dhs_tmin_hi_era5_psu) # 8178
+
+#### identify psus with missing data
+psus_missing <- df_dhs_tmin_hi_era5_psu |> filter(is.na(cutoff_tmin_hi_era5_100)) |> pull(psu) |> unique()
+
+#### check if the psus with missing data are also missing in the tmin_hi_era5_lt data
+df_tmin_hi_era5_lt |> filter(psu %in% psus_missing)
+
+#### drop the psus with missing data
+df_dhs_tmin_hi_era5_psu <- df_dhs_tmin_hi_era5_psu |> filter(!psu %in% psus_missing)
+nrow(df_dhs_tmin_hi_era5_psu) # 8151 
+
+#### save Tmin
+df_dhs_tmin_hi_era5_psu |> write_fst(here(path_processed, "1.3.1.j_df_dhs_tmin_hi_era5_psu_4mo.fst"))
+rm(df_tmin_hi_era5_lt, df_dhs_tmin_hi_era5_psu)
+print("ERA5 Tmin HI merged dataset saved.")
+

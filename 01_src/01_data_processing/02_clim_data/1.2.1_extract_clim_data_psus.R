@@ -22,8 +22,8 @@ india_boundary_buf <- readRDS(here(path_processed, "1.1.4.b_ind_boundary_0_buf.r
 
 # Step-1: Run the function to extract climate data for each PSU ----
 ## WBGT - Brimicombe ----
-### Tmax
-#### Extract the data
+### Tmax ----
+#### Extract the data 
 df_psu_tmax_wbgt <- merge_dhs_climate(
   path = here(path_tmax_wbgt_raw),
   clim_var = "tmax_wbgt",
@@ -40,7 +40,7 @@ df_psu_tmax_wbgt |> write_fst(path = here(path_processed, "1.2.1.a_df_psu_tmax_w
 rm(df_psu_tmax_wbgt)
 print("finished Step-1a: tmax-wbgt")
 
-### Tmin
+### Tmin ----
 #### Extract the data
 df_psu_tmin_wbgt <- merge_dhs_climate(
   path = here(path_tmin_wbgt_raw),
@@ -60,7 +60,7 @@ df_psu_tmin_wbgt |> write_fst(path = here(
 rm(df_psu_tmin_wbgt)
 print("finished Step-1b: tmin-wbgt")
 
-### Tmean
+### Tmean ----
 #### Extract the data
 df_psu_tmean_wbgt <- merge_dhs_climate(
   path = here(path_tmean_wbgt_raw),
@@ -82,8 +82,8 @@ df_psu_tmean_wbgt |> write_fst(path = here(
 rm(df_psu_tmean_wbgt)
 print("finished Step-1c: tmean-wbgt")
 
-## ERA - 5
-### Tmax
+## ERA - 5 ----
+### Tmax ----
 #### Extract the data
 df_psu_tmax_era5 <- merge_dhs_climate(
   path = here(path_tmax_era5),
@@ -104,7 +104,7 @@ df_psu_tmax_era5 |> write_fst(path = here(
 rm(df_psu_tmax_era5)
 print("finished Step-1d: tmax-era5")
 
-### Tmin
+### Tmin ----
 #### Extract the data
 df_psu_tmin_era5 <- merge_dhs_climate(
   path = here(path_tmin_era5),
@@ -125,7 +125,7 @@ df_psu_tmin_era5 |> write_fst(path = here(
 rm(df_psu_tmin_era5)
 print("finished Step-1e: tmin-era5")
 
-### Tmean
+### Tmean ----
 #### Extract the data
 df_psu_tmean_era5 <- merge_dhs_climate(
   path = here(path_tmean_era5),
@@ -146,8 +146,8 @@ df_psu_tmean_era5 |> write_fst(path = here(
 rm(df_psu_tmean_era5)
 print("finished Step-1f: tmean-era5")
 
-## NOAA
-### Tmax
+## NOAA ----
+### Tmax ----
 #### Extract the data
 df_psu_tmax_db_noaa <- merge_dhs_climate(
   path = here(path_tmax_db_noaa),
@@ -167,7 +167,7 @@ df_psu_tmax_db_noaa |> write_fst(path = here(path_processed,
 rm(df_psu_tmax_db_noaa)
 print("finished Step-1g: tmax db - noaa")
 
-### Tmin
+### Tmin ----
 #### Extract the data
 df_psu_tmin_db_noaa <- merge_dhs_climate(
   path = here(path_tmin_db_noaa),
@@ -186,3 +186,45 @@ df_psu_tmin_db_noaa |> write_fst(path = here(path_processed,
   "1.2.1.h_df_psu_tmin_db_noaa.fst"))
 rm(df_psu_tmin_db_noaa)
 print("finished Step-1h: tmin db - noaa")
+
+# Dewpoint temperature from ERA5 ----
+### Tmax ----
+df_psu_tmax_dew_era5 <- merge_dhs_climate(
+  path = here(path_tmax_dew_era5),
+  clim_var = "tmax_dew_era5",
+  from_index = 1, to_index = 42
+)
+
+#### basic cleaning
+setDT(df_psu_tmax_dew_era5)
+df_psu_tmax_dew_era5 <- df_psu_tmax_dew_era5[
+  , .(psu = as.factor(psu), date, tmax_dew_era5 = tmax_dew_era5 - 273.15)][
+    order(psu, date)]
+
+#### save the data
+df_psu_tmax_dew_era5 |> write_fst(path = here(
+  path_processed, 
+  "1.2.1.i_df_psu_tmax_dew_era5.fst"))
+rm(df_psu_tmax_dew_era5)
+print("finished Step-1i: tmax dew - era5")
+
+### Tmin ----
+#### Extract the data
+df_psu_tmin_dew_era5 <- merge_dhs_climate(
+  path = here(path_tmin_dew_era5),
+  clim_var = "tmin_dew_era5",
+  from_index = 1, to_index = 42
+)
+
+#### basic cleaning
+setDT(df_psu_tmin_dew_era5)
+df_psu_tmin_dew_era5 <- df_psu_tmin_dew_era5[
+  , .(psu = as.factor(psu), date, tmin_dew_era5 = tmin_dew_era5 - 273.15)][
+    order(psu, date)]
+
+#### save the data
+df_psu_tmin_dew_era5 |> write_fst(path = here(
+  path_processed, 
+  "1.2.1.j_df_psu_tmin_dew_era5.fst"))
+rm(df_psu_tmin_dew_era5)
+print("finished Step-1j: tmin dew - era5")
