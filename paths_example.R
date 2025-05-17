@@ -24,3 +24,5 @@ path_tmin_db_noaa <- here(root_dir, "climate-datasets/global/air-temperature-noa
 path_tmax_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmax/")
 path_tmin_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmin/")
 path_tmean_db_era5 <- here(root_dir, "climate-datasets/global/air-temperature-era5/tmean/")
+path_tmax_dew_era5 <- here(root_dir, "climate-datasets/global/dewpoint_temp_era5/max/")
+path_tmin_dew_era5 <- here(root_dir, "climate-datasets/global/dewpoint_temp_era5/min/")
